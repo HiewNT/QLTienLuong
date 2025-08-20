@@ -11,7 +11,7 @@ using System;
 
 namespace QLTienLuong.Controllers
 {
-    [Authorize]
+    [AdminOnly]
     public class UserController : Controller
     {
         private readonly QltienLuongContext _context;

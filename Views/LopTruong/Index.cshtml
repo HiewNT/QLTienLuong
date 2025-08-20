@@ -1,0 +1,141 @@
+@model IEnumerable<QLTienLuong.Models.HocVien>
+
+@{
+    ViewData["Title"] = "Danh sách học viên lớp";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-users me-2"></i>
+                                Danh sách học viên lớp @ViewBag.QuocTich
+                            </h5>
+                            <small class="text-muted">Lớp trưởng: @ViewBag.LopTruong</small>
+                        </div>
+                        <div class="card-tools">
+                            <span class="badge bg-primary">@Model.Count() học viên</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="hocVienTable">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Mã học viên</th>
+                                    <th>Họ tên</th>
+                                    <th>Ngày sinh</th>
+                                    <th>Khóa</th>
+                                    <th>Lớp</th>
+                                    <th>Ngành</th>
+                                    <th>Đơn vị</th>
+                                    <th>Phụ cấp</th>
+                                    <th>Khen thưởng</th>
+                                    <th>Tăng cường</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            <span class="fw-bold text-primary">@item.MaHocVien</span>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar-sm me-2">
+                                                    <i class="fas fa-user-circle fa-lg text-secondary"></i>
+                                                </div>
+                                                <div>
+                                                    <div class="fw-semibold">@item.HoTen</div>
+                                                    <small class="text-muted">@item.MaQuocTichNavigation?.TenQuocTich</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            @(item.NgaySinh?.ToString("dd/MM/yyyy") ?? "--")
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-info">@item.Khoa</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-secondary">@item.Lop</span>
+                                        </td>
+                                        <td>
+                                            <span class="text-muted">@item.Nganh</span>
+                                        </td>
+                                        <td>
+                                            <span class="text-muted">@item.DonVi</span>
+                                        </td>
+                                        <td>
+                                            @{
+                                                var phuCapCount = item.PhuCapHocViens?.Count ?? 0;
+                                            }
+                                            <div class="text-center">
+                                                <div class="fw-bold text-success">@phuCapCount</div>
+                                                <small class="text-muted">phụ cấp</small>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            @{
+                                                var khenThuongCount = item.KhenThuongKyLuats?.Count ?? 0;
+                                                var khenThuongTotal = item.KhenThuongKyLuats?.Sum(kt => kt.SoTien ?? 0) ?? 0;
+                                            }
+                                            <div class="text-center">
+                                                <div class="fw-bold @(khenThuongTotal >= 0 ? "text-success" : "text-danger")">@khenThuongCount</div>
+                                                <small class="text-muted @(khenThuongTotal >= 0 ? "text-success" : "text-danger")">
+                                                    @khenThuongTotal.ToString("N0") VNĐ
+                                                </small>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            @{
+                                                var tangLuongCount = item.HocVienTangLuongs?.Count ?? 0;
+                                            }
+                                            <div class="text-center">
+                                                <div class="fw-bold text-warning">@tangLuongCount</div>
+                                                <small class="text-muted">lần</small>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <a asp-action="Details" asp-route-id="@item.MaHocVien" 
+                                                   class="btn btn-sm btn-outline-primary" 
+                                                   title="Xem chi tiết">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#hocVienTable').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/vi.json'
+                },
+                pageLength: 25,
+                order: [[1, 'asc']],
+                columnDefs: [
+                    { orderable: false, targets: -1 }
+                ]
+            });
+        });
+    </script>
+}

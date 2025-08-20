@@ -11,7 +11,7 @@ using System.IO;
 
 namespace QLTienLuong.Controllers
 {
-    [Authorize]
+    [AdminOrNhanVienTaiChinh]
     public class HuongPhuCapController : Controller
     {
         private readonly QltienLuongContext _context;

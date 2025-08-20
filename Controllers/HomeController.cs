@@ -20,6 +20,7 @@ namespace QLTienLuong.Controllers
             _context = context;
         }
 
+        [AdminOrNhanVienTaiChinh]
         public async Task<IActionResult> Index()
         {
             try
@@ -86,6 +87,7 @@ namespace QLTienLuong.Controllers
         }
 
         // GET: Home/Profile
+        [AdminOrHocVienOrLopTruong]
         public async Task<IActionResult> Profile()
         {
             if (!User.Identity.IsAuthenticated) { return RedirectToAction("Login", "Account"); }
@@ -152,6 +154,7 @@ namespace QLTienLuong.Controllers
         }
 
         // GET: Home/EditProfile
+        [AdminOrHocVienOrLopTruong]
         public async Task<IActionResult> EditProfile()
         {
             if (!User.Identity.IsAuthenticated) { return RedirectToAction("Login", "Account"); }
@@ -184,6 +187,7 @@ namespace QLTienLuong.Controllers
         // POST: Home/EditProfile
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AdminOrHocVienOrLopTruong]
         public async Task<IActionResult> EditProfile(EditProfileViewModel model)
         {
             if (!User.Identity.IsAuthenticated) { return RedirectToAction("Login", "Account"); }

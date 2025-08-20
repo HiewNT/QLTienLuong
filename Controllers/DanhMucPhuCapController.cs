@@ -7,7 +7,7 @@ using QLTienLuong.Models;
 
 namespace QLTienLuong.Controllers
 {
-    [Authorize]
+    [AdminOrNhanVienTaiChinh]
     public class DanhMucPhuCapController : Controller
     {
         private readonly QltienLuongContext _context;

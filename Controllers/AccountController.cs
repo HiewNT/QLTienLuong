@@ -75,13 +75,25 @@ namespace QLTienLuong.Controllers
                     // Ghi log đăng nhập thành công
     
 
+                    // Redirect theo role
                     if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                     {
                         return Redirect(returnUrl);
                     }
                     else
                     {
-                        return RedirectToAction("Index", "Home");
+                        // Redirect theo role
+                        switch (user.MaRole)
+                        {
+                            case RoleConstants.ADMIN:
+                            case RoleConstants.NHAN_VIEN_TAI_CHINH:
+                                return RedirectToAction("Index", "Home");
+                            case RoleConstants.HOC_VIEN:
+                            case RoleConstants.LOP_TRUONG:
+                                return RedirectToAction("Profile", "Home");
+                            default:
+                                return RedirectToAction("Index", "Home");
+                        }
                     }
                 }
                 else

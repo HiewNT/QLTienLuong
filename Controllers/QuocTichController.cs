@@ -6,7 +6,7 @@ using QLTienLuong.Models;
 
 namespace QLTienLuong.Controllers
 {
-    [Authorize]
+    [AdminOnly]
     public class QuocTichController : Controller
     {
         private readonly QltienLuongContext _context;

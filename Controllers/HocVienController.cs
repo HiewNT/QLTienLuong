@@ -9,7 +9,7 @@ using OfficeOpenXml;
 
 namespace QLTienLuong.Controllers
 {
-    [Authorize]
+    [AdminOrNhanVienTaiChinh]
     public class HocVienController : Controller
     {
         private readonly QltienLuongContext _context;

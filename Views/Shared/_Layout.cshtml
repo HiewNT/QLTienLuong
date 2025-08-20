@@ -64,81 +64,129 @@
         <aside class="modern-sidebar" id="sidebar">
             <div class="sidebar-content">
                 <nav class="sidebar-nav">
-                    <!-- Dashboard -->
-                    <a class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")" 
-                       asp-controller="Home" asp-action="Index">
-                        <div class="nav-icon">
-                            <i class="fas fa-tachometer-alt"></i>
-                        </div>
-                        <span class="nav-text">Dashboard</span>
-                    </a>
-                    
-                    <!-- Section Header -->
-                    <div class="nav-section-header">
-                        <span>Quản lý chính</span>
-                    </div>
-                    
-                    <!-- Main Navigation -->
-                    <a class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "HocVien" ? "active" : "")" 
-                       asp-controller="HocVien" asp-action="Index">
-                        <div class="nav-icon">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <span class="nav-text">Học viên Quốc tế</span>
-                    </a>
-                    
-                    
-                    <a class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "DanhMucPhuCap" ? "active" : "")" 
-                       asp-controller="DanhMucPhuCap" asp-action="Index">
-                        <div class="nav-icon">
-                            <i class="fas fa-money-bill"></i>
-                        </div>
-                        <span class="nav-text">Danh mục Phụ cấp</span>
-                    </a>
+                    @{
+                        var userRole = User.FindFirst("MaRole")?.Value;
+                        var isAdmin = userRole == "1";
+                        var isLopTruong = userRole == "2";
+                        var isHocVien = userRole == "3";
+                        var isNhanVienTaiChinh = userRole == "4";
+                    }
 
-                    
-                    <a class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "HuongPhuCap" ? "active" : "")" 
-                       asp-controller="HuongPhuCap" asp-action="Index">
-                        <div class="nav-icon">
-                            <i class="fas fa-hand-holding-usd"></i>
-                        </div>
-                        <span class="nav-text">Hưởng Phụ cấp</span>
-                    </a>
-                    
-                    <a class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "KhenThuongKyLuat" ? "active" : "")" 
-                       asp-controller="KhenThuongKyLuat" asp-action="Index">
-                        <div class="nav-icon">
-                            <i class="fas fa-award"></i>
-                        </div>
-                        <span class="nav-text">Khen thưởng/Kỷ luật</span>
-                    </a>
-                    
-                    
-                    <a class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "TangLuong" ? "active" : "")" 
-                       asp-controller="TangLuong" asp-action="Index">
-                        <div class="nav-icon">
-                            <i class="fas fa-arrow-up"></i>
-                        </div>
-                        <span class="nav-text">Tăng cường</span>
-                    </a>
-                    
-                    <a class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "QuocTich" ? "active" : "")" 
-                       asp-controller="QuocTich" asp-action="Index">
-                        <div class="nav-icon">
-                            <i class="fas fa-flag"></i>
-                        </div>
-                        <span class="nav-text">Quốc tịch</span>
-                    </a>
-                    
-                    <a class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "User" ? "active" : "")" 
-                       asp-controller="User" asp-action="Index">
-                        <div class="nav-icon">
-                            <i class="fas fa-user-cog"></i>
-                        </div>
-                        <span class="nav-text">Người dùng</span>
-                    </a>
-                    
+                    <!-- Dashboard - Chỉ Admin và Nhân viên tài chính -->
+                    @if (isAdmin || isNhanVienTaiChinh)
+                    {
+                        <a class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")" 
+                           asp-controller="Home" asp-action="Index">
+                            <div class="nav-icon">
+                                <i class="fas fa-tachometer-alt"></i>
+                            </div>
+                            <span class="nav-text">Dashboard</span>
+                        </a>
+                    }
 
+                    <!-- Quản lý chính - Chỉ Admin và Nhân viên tài chính -->
+                    @if (isAdmin || isNhanVienTaiChinh)
+                    {
+                        <div class="nav-section-header">
+                            <span>Quản lý chính</span>
+                        </div>
+                    }
+
+                    <!-- Học viên Quốc tế - Admin, Nhân viên tài chính -->
+                    @if (isAdmin || isNhanVienTaiChinh)
+                    {
+                        <a class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "HocVien" ? "active" : "")" 
+                           asp-controller="HocVien" asp-action="Index">
+                            <div class="nav-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <span class="nav-text">Học viên Quốc tế</span>
+                        </a>
+                    }
+
+                    <!-- Danh sách học viên lớp - Chỉ Lớp trưởng -->
+                    @if (isLopTruong)
+                    {
+                        <a class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "LopTruong" ? "active" : "")" 
+                           asp-controller="LopTruong" asp-action="Index">
+                            <div class="nav-icon">
+                                <i class="fas fa-user-graduate"></i>
+                            </div>
+                            <span class="nav-text">Danh sách học viên lớp</span>
+                        </a>
+                    }
+
+                    <!-- Danh mục Phụ cấp - Chỉ Admin và Nhân viên tài chính -->
+                    @if (isAdmin || isNhanVienTaiChinh)
+                    {
+                        <a class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "DanhMucPhuCap" ? "active" : "")" 
+                           asp-controller="DanhMucPhuCap" asp-action="Index">
+                            <div class="nav-icon">
+                                <i class="fas fa-money-bill"></i>
+                            </div>
+                            <span class="nav-text">Danh mục Phụ cấp</span>
+                        </a>
+                    }
+
+                    <!-- Hưởng Phụ cấp - Chỉ Admin và Nhân viên tài chính -->
+                    @if (isAdmin || isNhanVienTaiChinh)
+                    {
+                        <a class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "HuongPhuCap" ? "active" : "")" 
+                           asp-controller="HuongPhuCap" asp-action="Index">
+                            <div class="nav-icon">
+                                <i class="fas fa-hand-holding-usd"></i>
+                            </div>
+                            <span class="nav-text">Hưởng Phụ cấp</span>
+                        </a>
+                    }
+
+                    <!-- Khen thưởng/Kỷ luật - Chỉ Admin và Nhân viên tài chính -->
+                    @if (isAdmin || isNhanVienTaiChinh)
+                    {
+                        <a class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "KhenThuongKyLuat" ? "active" : "")" 
+                           asp-controller="KhenThuongKyLuat" asp-action="Index">
+                            <div class="nav-icon">
+                                <i class="fas fa-award"></i>
+                            </div>
+                            <span class="nav-text">Khen thưởng/Kỷ luật</span>
+                        </a>
+                    }
+
+                    <!-- Tăng cường - Chỉ Admin và Nhân viên tài chính -->
+                    @if (isAdmin || isNhanVienTaiChinh)
+                    {
+                        <a class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "TangLuong" ? "active" : "")" 
+                           asp-controller="TangLuong" asp-action="Index">
+                            <div class="nav-icon">
+                                <i class="fas fa-arrow-up"></i>
+                            </div>
+                            <span class="nav-text">Tăng cường</span>
+                        </a>
+                    }
+
+                    <!-- Quốc tịch - Chỉ Admin -->
+                    @if (isAdmin)
+                    {
+                        <a class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "QuocTich" ? "active" : "")" 
+                           asp-controller="QuocTich" asp-action="Index">
+                            <div class="nav-icon">
+                                <i class="fas fa-flag"></i>
+                            </div>
+                            <span class="nav-text">Quốc tịch</span>
+                        </a>
+                    }
+
+                    <!-- Người dùng - Chỉ Admin -->
+                    @if (isAdmin)
+                    {
+                        <a class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "User" ? "active" : "")" 
+                           asp-controller="User" asp-action="Index">
+                            <div class="nav-icon">
+                                <i class="fas fa-user-cog"></i>
+                            </div>
+                            <span class="nav-text">Người dùng</span>
+                        </a>
+                    }
                 </nav>
 
             </div>
