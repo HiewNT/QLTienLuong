@@ -20,9 +20,24 @@ namespace QLTienLuong.Controllers
             _context = context;
         }
 
-        [AdminOrNhanVienTaiChinh]
         public async Task<IActionResult> Index()
         {
+            // Kiểm tra nếu là Lớp trưởng thì redirect về Profile
+            if (User.Identity.IsAuthenticated)
+            {
+                var userRole = User.FindFirst("MaRole")?.Value;
+                if (userRole == "2") // Lớp trưởng
+                {
+                    return RedirectToAction("Profile", "Home");
+                }
+            }
+
+            // Kiểm tra quyền truy cập Dashboard
+            if (!User.IsInRole(RoleConstants.RoleNames.ADMIN) && !User.IsInRole(RoleConstants.RoleNames.NHAN_VIEN_TAI_CHINH))
+            {
+                return RedirectToAction("AccessDenied", "Account");
+            }
+
             try
             {
                 var dashboardData = new DashboardViewModel

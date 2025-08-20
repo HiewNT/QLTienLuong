@@ -84,6 +84,18 @@
                         </a>
                     }
 
+                    <!-- Hồ sơ cá nhân - Chỉ Học viên và Lớp trưởng -->
+                    @if (isHocVien || isLopTruong)
+                    {
+                        <a class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "Profile" ? "active" : "")" 
+                           asp-controller="Home" asp-action="Profile">
+                            <div class="nav-icon">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <span class="nav-text">Hồ sơ cá nhân</span>
+                        </a>
+                    }
+
                     <!-- Quản lý chính - Chỉ Admin và Nhân viên tài chính -->
                     @if (isAdmin || isNhanVienTaiChinh)
                     {
@@ -272,8 +284,6 @@
             updateTime();
             setInterval(updateTime, 60000); // Update every minute
 
-
-
             // Responsive sidebar
             function handleResize() {
                 if ($(window).width() < 768) {
@@ -294,6 +304,26 @@
                 });
             }
         });
+
+        // Global function for safe back navigation
+        function safeGoBack(defaultUrl) {
+            try {
+                // Thử quay lại trang trước đó
+                if (document.referrer && document.referrer !== window.location.href) {
+                    window.history.back();
+                } else if (defaultUrl) {
+                    // Nếu không có trang trước đó hoặc cùng trang, chuyển về URL mặc định
+                    window.location.href = defaultUrl;
+                } else {
+                    // Fallback: về trang chủ
+                    window.location.href = '/';
+                }
+            } catch (error) {
+                console.error('Lỗi khi quay lại:', error);
+                // Fallback: về trang chủ
+                window.location.href = '/';
+            }
+        }
     </script>
     
     @await RenderSectionAsync("Scripts", required: false)
