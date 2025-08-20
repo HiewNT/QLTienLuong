@@ -1,0 +1,183 @@
+@model QLTienLuong.Models.HuongPhuCap
+
+@{
+    ViewData["Title"] = "Xóa Hưởng Phụ cấp";
+}
+
+<div class="fade-in">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="mb-0">
+            <i class="fas fa-trash me-2"></i>Xóa Hưởng Phụ cấp
+        </h3>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-1"></i>Quay lại
+        </a>
+    </div>
+
+    <!-- Warning Card -->
+    <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">
+            <i class="fas fa-exclamation-triangle me-2"></i>Cảnh báo!
+        </h4>
+        <p class="mb-0">
+            Bạn có chắc chắn muốn xóa thông tin Hưởng Phụ cấp này không? Hành động này không thể hoàn tác.
+        </p>
+    </div>
+
+    <!-- Information Card -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="fas fa-info-circle me-2"></i>Thông tin sẽ bị xóa
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <dl class="row">
+                        <dt class="col-sm-4">
+                            <i class="fas fa-hashtag me-1"></i>ID:
+                        </dt>
+                        <dd class="col-sm-8">
+                            <strong class="text-primary">@Model.MaHuongPhuCap</strong>
+                        </dd>
+
+                        <dt class="col-sm-4">
+                            <i class="fas fa-user me-1"></i>Học viên:
+                        </dt>
+                        <dd class="col-sm-8">
+                            @if (Model.MaHocVienNavigation != null)
+                            {
+                                <strong>@Model.MaHocVienNavigation.HoTen</strong>
+                                <br>
+                                <small class="text-muted">@Model.MaHocVien</small>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Chưa xác định</span>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-4">
+                            <i class="fas fa-calendar me-1"></i>Tháng/Năm:
+                        </dt>
+                        <dd class="col-sm-8">
+                            @if (Model.ThangNam.HasValue)
+                            {
+                                <span class="badge bg-info">@Model.ThangNam.Value.ToString("MM/yyyy")</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Chưa xác định</span>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-4">
+                            <i class="fas fa-clock me-1"></i>Kỳ:
+                        </dt>
+                        <dd class="col-sm-8">
+                            @if (!string.IsNullOrEmpty(Model.Ky))
+                            {
+                                <span class="badge bg-secondary">@Model.Ky</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Chưa xác định</span>
+                            }
+                        </dd>
+                    </dl>
+                </div>
+
+                <div class="col-md-6">
+                    <dl class="row">
+                        <dt class="col-sm-4">
+                            <i class="fas fa-money-bill me-1"></i>Tổng Phụ cấp:
+                        </dt>
+                        <dd class="col-sm-8">
+                            @if (Model.TongPhuCap.HasValue)
+                            {
+                                <strong class="text-success">@Model.TongPhuCap.Value.ToString("N0") VNĐ</strong>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Chưa xác định</span>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-4">
+                            <i class="fas fa-hand-holding-usd me-1"></i>Đoàn Phí:
+                        </dt>
+                        <dd class="col-sm-8">
+                            @if (Model.DoanPhi.HasValue)
+                            {
+                                <span>@Model.DoanPhi.Value.ToString("N0") VNĐ</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Chưa xác định</span>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-4">
+                            <i class="fas fa-graduation-cap me-1"></i>Lớp Học:
+                        </dt>
+                        <dd class="col-sm-8">
+                            @if (Model.LopHoc.HasValue)
+                            {
+                                <span>@Model.LopHoc.Value.ToString("N0") VNĐ</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Chưa xác định</span>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-4">
+                            <i class="fas fa-heart me-1"></i>Trợ Ứng:
+                        </dt>
+                        <dd class="col-sm-8">
+                            @if (Model.TrUung.HasValue)
+                            {
+                                <span>@Model.TrUung.Value.ToString("N0") VNĐ</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Chưa xác định</span>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-4">
+                            <i class="fas fa-baby me-1"></i>Con Nhỏ:
+                        </dt>
+                        <dd class="col-sm-8">
+                            @if (Model.ConNhan.HasValue)
+                            {
+                                <span>@Model.ConNhan.Value.ToString("N0") VNĐ</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Chưa xác định</span>
+                            }
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Form -->
+    <form asp-action="Delete" method="post" class="mt-4">
+        <input type="hidden" asp-for="MaHuongPhuCap" />
+        
+        <div class="d-flex gap-2 justify-content-center">
+            <button type="submit" class="btn btn-danger">
+                <i class="fas fa-trash me-1"></i>Xác nhận xóa
+            </button>
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="fas fa-times me-1"></i>Hủy bỏ
+            </a>
+        </div>
+    </form>
+</div>
+

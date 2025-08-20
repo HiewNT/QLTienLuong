@@ -1,0 +1,585 @@
+@model QLTienLuong.Models.ProfileViewModel
+@{
+    ViewData["Title"] = "Hồ sơ cá nhân";
+}
+
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-1">
+                        <i class="fas fa-user-circle text-primary me-2"></i>Hồ sơ cá nhân
+                    </h2>
+                    <p class="text-muted mb-0">Thông tin chi tiết về tài khoản và các hoạt động</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <a asp-controller="Home" asp-action="EditProfile" class="btn btn-primary">
+                        <i class="fas fa-edit me-1"></i>Chỉnh sửa hồ sơ
+                    </a>
+                    <a asp-controller="Account" asp-action="ChangePassword" class="btn btn-warning">
+                        <i class="fas fa-key me-1"></i>Đổi mật khẩu
+                    </a>
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-1"></i>Quay lại
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Thông tin cơ bản -->
+    <div class="row mb-4">
+        <!-- Thông tin tài khoản -->
+        <div class="col-lg-6 col-md-6 mb-3">
+            <div class="card h-100 border-primary">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>Thông tin tài khoản
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-sm-4">
+                            <strong>Mã người dùng:</strong>
+                        </div>
+                        <div class="col-sm-8">
+                            <span class="badge bg-secondary">@Model.User.MaUser</span>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-sm-4">
+                            <strong>Tên đăng nhập:</strong>
+                        </div>
+                        <div class="col-sm-8">
+                            <strong>@Model.User.Username</strong>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-sm-4">
+                            <strong>Vai trò:</strong>
+                        </div>
+                        <div class="col-sm-8">
+                            <span class="badge bg-primary">@Model.User.MaRoleNavigation.TenRole</span>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-sm-4">
+                            <strong>Trạng thái:</strong>
+                        </div>
+                        <div class="col-sm-8">
+                            @if (Model.User.Active == true)
+                            {
+                                <span class="badge bg-success">Đang hoạt động</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Đã vô hiệu hóa</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Thông tin học viên -->
+        <div class="col-lg-6 col-md-6 mb-3">
+            <div class="card h-100 border-success">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user-graduate me-2"></i>Thông tin học viên
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.User.MaHocVienNavigation != null)
+                    {
+                        <div class="row mb-3">
+                            <div class="col-sm-4">
+                                <strong>Mã học viên:</strong>
+                            </div>
+                            <div class="col-sm-8">
+                                <span class="badge bg-secondary">@Model.User.MaHocVienNavigation.MaHocVien</span>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-sm-4">
+                                <strong>Họ và tên:</strong>
+                            </div>
+                            <div class="col-sm-8">
+                                <strong>@Model.User.MaHocVienNavigation.HoTen</strong>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-sm-4">
+                                <strong>Ngày sinh:</strong>
+                            </div>
+                            <div class="col-sm-8">
+                                @(Model.User.MaHocVienNavigation.NgaySinh?.ToString("dd/MM/yyyy") ?? "Chưa cập nhật")
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-sm-4">
+                                <strong>Khóa:</strong>
+                            </div>
+                            <div class="col-sm-8">
+                                @(Model.User.MaHocVienNavigation.Khoa ?? "Chưa cập nhật")
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-sm-4">
+                                <strong>Lớp:</strong>
+                            </div>
+                            <div class="col-sm-8">
+                                @(Model.User.MaHocVienNavigation.Lop ?? "Chưa cập nhật")
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-sm-4">
+                                <strong>Ngành:</strong>
+                            </div>
+                            <div class="col-sm-8">
+                                @(Model.User.MaHocVienNavigation.Nganh ?? "Chưa cập nhật")
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-sm-4">
+                                <strong>Đơn vị:</strong>
+                            </div>
+                            <div class="col-sm-8">
+                                @(Model.User.MaHocVienNavigation.DonVi ?? "Chưa cập nhật")
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-sm-4">
+                                <strong>Quốc tịch:</strong>
+                            </div>
+                            <div class="col-sm-8">
+                                @(Model.User.MaHocVienNavigation.MaQuocTichNavigation?.TenQuocTich ?? "Chưa cập nhật")
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-sm-4">
+                                <strong>Năm tốt nghiệp:</strong>
+                            </div>
+                            <div class="col-sm-8">
+                                @(Model.User.MaHocVienNavigation.NamTotNghiep?.ToString() ?? "Chưa cập nhật")
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info mb-0">
+                            <i class="fas fa-info-circle me-2"></i>Không có thông tin học viên liên kết.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Thông tin chi tiết -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list-alt me-2"></i>Thông tin chi tiết
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs nav-fill" id="profileTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="phucap-tab" data-bs-toggle="tab" data-bs-target="#phucap" type="button" role="tab">
+                                <i class="fas fa-hand-holding-usd me-2"></i>Phụ cấp đang nhận
+                                <span class="badge bg-success ms-1">@Model.PhuCapHocViens.Count</span>
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="khenthuong-tab" data-bs-toggle="tab" data-bs-target="#khenthuong" type="button" role="tab">
+                                <i class="fas fa-trophy me-2"></i>Khen thưởng kỷ luật
+                                <span class="badge bg-warning ms-1">@Model.KhenThuongKyLuats.Count</span>
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="tangluong-tab" data-bs-toggle="tab" data-bs-target="#tangluong" type="button" role="tab">
+                                <i class="fas fa-chart-line me-2"></i>Tăng cường
+                                <span class="badge bg-success ms-1">@Model.HocVienTangLuongs.Count</span>
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="huongphucap-tab" data-bs-toggle="tab" data-bs-target="#huongphucap" type="button" role="tab">
+                                <i class="fas fa-money-bill-wave me-2"></i>Hưởng phụ cấp gần đây
+                                <span class="badge bg-primary ms-1">@Model.HuongPhuCaps.Count</span>
+                            </button>
+                        </li>
+                    </ul>
+
+                    <!-- Tab content -->
+                    <div class="tab-content" id="profileTabsContent">
+                        <!-- Tab Phụ cấp đang nhận -->
+                        <div class="tab-pane fade show active" id="phucap" role="tabpanel">
+                            <div class="p-3">
+                                @if (Model.PhuCapHocViens.Any())
+                                {
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-hover">
+                                            <thead class="table-dark">
+                                                <tr>
+                                                    <th width="5%">STT</th>
+                                                    <th width="15%">Mã phụ cấp</th>
+                                                    <th width="30%">Tên phụ cấp</th>
+                                                    <th width="20%">Mức phụ cấp</th>
+                                                    <th width="20%">Ngày áp dụng</th>
+                                                    <th width="10%">Trạng thái</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @{
+                                                    int sttPhuCap = 1;
+                                                }
+                                                @foreach (var phuCap in Model.PhuCapHocViens)
+                                                {
+                                                    <tr>
+                                                        <td class="text-center">@sttPhuCap</td>
+                                                        <td><span class="badge bg-secondary">@phuCap.MaPhuCap</span></td>
+                                                        <td><strong>@phuCap.MaPhuCapNavigation?.TenPhuCap</strong></td>
+                                                        <td>
+                                                            @if (phuCap.MaPhuCapNavigation?.MucPhuCapCoBan.HasValue == true)
+                                                            {
+                                                                <span class="text-success fw-bold">@phuCap.MaPhuCapNavigation.MucPhuCapCoBan.Value.ToString("N0") VNĐ</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="text-muted">--</span>
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            @if (phuCap.NgayApDung.HasValue)
+                                                            {
+                                                                <span class="badge bg-info">@phuCap.NgayApDung.Value.ToString("dd/MM/yyyy")</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="text-muted">--</span>
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            <span class="badge bg-success">Đang áp dụng</span>
+                                                        </td>
+                                                    </tr>
+                                                    sttPhuCap++;
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="text-center py-5">
+                                        <i class="fas fa-hand-holding-usd text-muted fa-3x mb-3"></i>
+                                        <h5 class="text-muted">Chưa có thông tin phụ cấp nào được áp dụng</h5>
+                                        <p class="text-muted">Hãy liên hệ quản trị viên để được cấp phụ cấp</p>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Tab Khen thưởng kỷ luật -->
+                        <div class="tab-pane fade" id="khenthuong" role="tabpanel">
+                            <div class="p-3">
+                                @if (Model.KhenThuongKyLuats.Any())
+                                {
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-hover">
+                                            <thead class="table-dark">
+                                                <tr>
+                                                    <th width="5%">STT</th>
+                                                    <th width="15%">Số quyết định</th>
+                                                    <th width="15%">Loại hình</th>
+                                                    <th width="25%">Lý do</th>
+                                                    <th width="15%">Số tiền</th>
+                                                    <th width="15%">Ngày quyết định</th>
+                                                    <th width="10%">Trạng thái</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @{
+                                                    int sttKhenThuong = 1;
+                                                }
+                                                @foreach (var khenThuong in Model.KhenThuongKyLuats)
+                                                {
+                                                    <tr>
+                                                        <td class="text-center">@sttKhenThuong</td>
+                                                        <td><span class="badge bg-primary">@khenThuong.MaQuyetDinh</span></td>
+                                                        <td>
+                                                            @if (khenThuong.LoaiHinh == "Khen thưởng")
+                                                            {
+                                                                <span class="badge bg-success">@khenThuong.LoaiHinh</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="badge bg-danger">@khenThuong.LoaiHinh</span>
+                                                            }
+                                                        </td>
+                                                        <td>@khenThuong.LyDo</td>
+                                                        <td>
+                                                            @if (khenThuong.SoTien.HasValue)
+                                                            {
+                                                                <span class="text-success fw-bold">@khenThuong.SoTien.Value.ToString("N0") VNĐ</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="text-muted">--</span>
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            @if (khenThuong.NgayQuyetDinh.HasValue)
+                                                            {
+                                                                <span class="badge bg-info">@khenThuong.NgayQuyetDinh.Value.ToString("dd/MM/yyyy")</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="text-muted">--</span>
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            <span class="badge bg-success">Đã thực hiện</span>
+                                                        </td>
+                                                    </tr>
+                                                    sttKhenThuong++;
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="text-center py-5">
+                                        <i class="fas fa-trophy text-muted fa-3x mb-3"></i>
+                                        <h5 class="text-muted">Chưa có thông tin khen thưởng kỷ luật nào</h5>
+                                        <p class="text-muted">Hãy cố gắng học tập và rèn luyện tốt</p>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Tab Tăng lương -->
+                        <div class="tab-pane fade" id="tangluong" role="tabpanel">
+                            <div class="p-3">
+                                @if (Model.HocVienTangLuongs.Any())
+                                {
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-hover">
+                                            <thead class="table-dark">
+                                                <tr>
+                                                    <th width="5%">STT</th>
+                                                    <th width="12%">Mã tăng cường</th>
+                                                    <th width="12%">Tháng/Năm</th>
+                                                    <th width="25%">Lý do tăng cường</th>
+                                                    <th width="15%">Mức lương tăng</th>
+                                                    <th width="15%">Ngày tăng cường</th>
+                                                    <th width="16%">Ghi chú</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @{
+                                                    int sttTangLuong = 1;
+                                                }
+                                                @foreach (var hocVienTangLuong in Model.HocVienTangLuongs)
+                                                {
+                                                    <tr>
+                                                        <td class="text-center">@sttTangLuong</td>
+                                                        <td><span class="badge bg-primary">@hocVienTangLuong.MaTangLuong</span></td>
+                                                        <td>
+                                                            @if (hocVienTangLuong.ThangNam.HasValue)
+                                                            {
+                                                                <span class="badge bg-info">@hocVienTangLuong.ThangNam.Value.ToString("MM/yyyy")</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="text-muted">--</span>
+                                                            }
+                                                        </td>
+                                                        <td>@hocVienTangLuong.MaTangLuongNavigation?.LyDoTangLuong</td>
+                                                        <td>
+                                                            @if (hocVienTangLuong.MaTangLuongNavigation?.MucLuongTang.HasValue == true)
+                                                            {
+                                                                <span class="text-success fw-bold">@hocVienTangLuong.MaTangLuongNavigation.MucLuongTang.Value.ToString("N0") VNĐ</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="text-muted">--</span>
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            @if (hocVienTangLuong.MaTangLuongNavigation?.NgayTangLuong.HasValue == true)
+                                                            {
+                                                                <span class="badge bg-info">@hocVienTangLuong.MaTangLuongNavigation.NgayTangLuong.Value.ToString("dd/MM/yyyy")</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="text-muted">--</span>
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            @if (!string.IsNullOrEmpty(hocVienTangLuong.GhiChu))
+                                                            {
+                                                                <span class="text-muted">@hocVienTangLuong.GhiChu</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="text-muted">--</span>
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                    sttTangLuong++;
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="text-center py-5">
+                                        <i class="fas fa-chart-line text-muted fa-3x mb-3"></i>
+                                                                <h5 class="text-muted">Chưa có thông tin tăng cường nào</h5>
+                        <p class="text-muted">Hãy cố gắng để được xem xét tăng cường</p>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Tab Hưởng phụ cấp gần đây -->
+                        <div class="tab-pane fade" id="huongphucap" role="tabpanel">
+                            <div class="p-3">
+                                @if (Model.HuongPhuCaps.Any())
+                                {
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-hover">
+                                            <thead class="table-dark">
+                                                <tr>
+                                                    <th width="5%">STT</th>
+                                                    <th width="12%">Tháng/Năm</th>
+                                                    <th width="15%">Tổng phụ cấp</th>
+                                                    <th width="12%">Đoàn phí</th>
+                                                    <th width="12%">Lớp học</th>
+                                                    <th width="12%">Trừ ứng</th>
+                                                    <th width="15%">Còn nhận</th>
+                                                    <th width="17%">Ký nhận</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @{
+                                                    int sttHuongPhuCap = 1;
+                                                }
+                                                @foreach (var huongPhuCap in Model.HuongPhuCaps)
+                                                {
+                                                    <tr>
+                                                        <td class="text-center">@sttHuongPhuCap</td>
+                                                        <td>
+                                                            @if (huongPhuCap.ThangNam.HasValue)
+                                                            {
+                                                                <span class="badge bg-info">@huongPhuCap.ThangNam.Value.ToString("MM/yyyy")</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="text-muted">--</span>
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            @if (huongPhuCap.TongPhuCap.HasValue)
+                                                            {
+                                                                <span class="text-success fw-bold">@huongPhuCap.TongPhuCap.Value.ToString("N0") VNĐ</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="text-muted">--</span>
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            @if (huongPhuCap.DoanPhi.HasValue)
+                                                            {
+                                                                <span class="text-warning">@huongPhuCap.DoanPhi.Value.ToString("N0") VNĐ</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="text-muted">--</span>
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            @if (huongPhuCap.LopHoc.HasValue)
+                                                            {
+                                                                <span class="text-warning">@huongPhuCap.LopHoc.Value.ToString("N0") VNĐ</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="text-muted">--</span>
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            @if (huongPhuCap.TrUung.HasValue)
+                                                            {
+                                                                <span class="text-warning">@huongPhuCap.TrUung.Value.ToString("N0") VNĐ</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="text-muted">--</span>
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            @if (huongPhuCap.ConNhan.HasValue)
+                                                            {
+                                                                <span class="text-success fw-bold">@huongPhuCap.ConNhan.Value.ToString("N0") VNĐ</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="text-muted">--</span>
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            @if (!string.IsNullOrEmpty(huongPhuCap.Ky))
+                                                            {
+                                                                <span class="badge bg-success">@huongPhuCap.Ky</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="text-muted">--</span>
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                    sttHuongPhuCap++;
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="text-center py-5">
+                                        <i class="fas fa-money-bill-wave text-muted fa-3x mb-3"></i>
+                                        <h5 class="text-muted">Chưa có thông tin hưởng phụ cấp nào</h5>
+                                        <p class="text-muted">Hãy chờ thông báo về việc hưởng phụ cấp</p>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

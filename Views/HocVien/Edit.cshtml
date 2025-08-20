@@ -1,0 +1,158 @@
+@model QLTienLuong.Models.HocVien
+
+@{
+    ViewData["Title"] = "Chỉnh sửa học viên";
+}
+
+<div class="fade-in">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="mb-0">
+            <i class="fas fa-user-edit me-2"></i>Chỉnh sửa học viên
+        </h3>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-1"></i>Quay lại
+        </a>
+    </div>
+
+    <!-- Form -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="fas fa-edit me-2"></i>Cập nhật thông tin học viên
+            </h5>
+        </div>
+        <div class="card-body">
+            <form asp-action="Edit" method="post">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="MaHocVien" class="form-label">
+                                <i class="fas fa-id-card me-1"></i>Mã Học viên
+                            </label>
+                            <input asp-for="MaHocVien" class="form-control" readonly />
+                            <span asp-validation-for="MaHocVien" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="HoTen" class="form-label">
+                                <i class="fas fa-user me-1"></i>Họ và Tên <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="HoTen" class="form-control" placeholder="Nhập họ và tên" />
+                            <span asp-validation-for="HoTen" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="NgaySinh" class="form-label">
+                                <i class="fas fa-calendar me-1"></i>Ngày sinh
+                            </label>
+                            <input asp-for="NgaySinh" class="form-control" type="date" />
+                            <span asp-validation-for="NgaySinh" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="MaQuocTich" class="form-label">
+                                <i class="fas fa-flag me-1"></i>Quốc tịch
+                            </label>
+                            <select asp-for="MaQuocTich" class="form-control" asp-items="ViewBag.MaQuocTich">
+                                <option value="">-- Chọn quốc tịch --</option>
+                            </select>
+                            <span asp-validation-for="MaQuocTich" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label asp-for="Khoa" class="form-label">
+                                <i class="fas fa-book me-1"></i>Khóa
+                            </label>
+                            <input asp-for="Khoa" class="form-control" placeholder="Nhập khóa" />
+                            <span asp-validation-for="Khoa" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label asp-for="Lop" class="form-label">
+                                <i class="fas fa-users me-1"></i>Lớp
+                            </label>
+                            <input asp-for="Lop" class="form-control" placeholder="Nhập lớp" />
+                            <span asp-validation-for="Lop" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label asp-for="Nganh" class="form-label">
+                                <i class="fas fa-graduation-cap me-1"></i>Ngành
+                            </label>
+                            <input asp-for="Nganh" class="form-control" placeholder="Nhập ngành" />
+                            <span asp-validation-for="Nganh" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="DonVi" class="form-label">
+                                <i class="fas fa-building me-1"></i>Đơn vị
+                            </label>
+                            <input asp-for="DonVi" class="form-control" placeholder="Nhập đơn vị" />
+                            <span asp-validation-for="DonVi" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="NamTotNghiep" class="form-label">
+                                <i class="fas fa-calendar-check me-1"></i>Năm tốt nghiệp
+                            </label>
+                            <input asp-for="NamTotNghiep" class="form-control" type="number" 
+                                   min="1950" max="2050" placeholder="Ví dụ: 2024" />
+                            <span asp-validation-for="NamTotNghiep" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary me-3">
+                        <i class="fas fa-save me-1"></i>Cập nhật
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-times me-1"></i>Hủy bỏ
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function() {
+            // Auto focus first editable input
+            $('#HoTen').focus();
+            
+            // Form validation styling
+            $('form').on('submit', function() {
+                var $btn = $('button[type="submit"]');
+                $btn.prop('disabled', true);
+                $btn.html('<i class="fas fa-spinner fa-spin me-1"></i>Đang cập nhật...');
+            });
+        });
+    </script>
+}

@@ -1,0 +1,282 @@
+@model QLTienLuong.Models.TangLuong
+
+@{
+    ViewData["Title"] = "Thêm học viên vào Tăng cường";
+}
+
+<div class="fade-in">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="mb-1">
+                <i class="fas fa-user-plus me-2 text-success"></i>Thêm học viên vào Tăng cường
+            </h4>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item">
+                        <a asp-action="Index">
+                            <i class="fas fa-arrow-up me-1"></i>Danh sách Tăng cường
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a asp-action="Details" asp-route-id="@Model.MaTangLuong">
+                            <i class="fas fa-info-circle me-1"></i>Chi tiết
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active">Thêm học viên</li>
+                </ol>
+            </nav>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Details" asp-route-id="@Model.MaTangLuong" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Quay lại
+            </a>
+        </div>
+    </div>
+
+    
+
+    <div class="row">
+                    <!-- Thông tin tăng cường -->
+        <div class="col-lg-4 mb-4">
+            <div class="card border-success">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>Thông tin Tăng cường
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label text-muted">
+                            <i class="fas fa-hashtag me-1"></i>Mã tăng cường
+                        </label>
+                        <p class="form-control-plaintext fw-bold text-primary">#@Model.MaTangLuong</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted">
+                            <i class="fas fa-coins me-1"></i>Mức tăng cường
+                        </label>
+                        <p class="form-control-plaintext">
+                            @if (Model.MucLuongTang.HasValue)
+                            {
+                                <span class="text-success fw-bold">@Model.MucLuongTang.Value.ToString("N0") VNĐ</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Chưa xác định</span>
+                            }
+                        </p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted">
+                            <i class="fas fa-calendar me-1"></i>Ngày tăng cường
+                        </label>
+                        <p class="form-control-plaintext">
+                            @if (Model.NgayTangLuong.HasValue)
+                            {
+                                <span>@Model.NgayTangLuong.Value.ToString("dd/MM/yyyy")</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Chưa xác định</span>
+                            }
+                        </p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted">
+                            <i class="fas fa-info-circle me-1"></i>Lý do
+                        </label>
+                        <p class="form-control-plaintext">
+                            @if (!string.IsNullOrEmpty(Model.LyDoTangLuong))
+                            {
+                                <span>@Model.LyDoTangLuong</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Chưa có lý do</span>
+                            }
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form thêm học viên -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user-plus me-2"></i>Thêm học viên
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="AddStudentForm" method="post">
+                        <input type="hidden" name="id" value="@Model.MaTangLuong" />
+                        
+                        <div class="mb-3">
+                            <label for="MaHocVien" class="form-label">
+                                <i class="fas fa-users me-1"></i>Chọn học viên <span class="text-danger">*</span>
+                            </label>
+                            <select id="MaHocVien" name="MaHocVien" class="form-select" multiple size="8">
+                                @if (ViewData["MaHocVien"] is SelectList selectList)
+                                {
+                                    @foreach (var item in selectList)
+                                    {
+                                        <option value="@item.Value" data-info="@item.Text">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                            <div class="form-text">
+                                <i class="fas fa-info-circle me-1"></i>Giữ Ctrl để chọn nhiều học viên
+                            </div>
+                        </div>
+
+                        <!-- Danh sách học viên đã chọn -->
+                        <div id="selectedStudents" class="mb-3" style="display: none;">
+                            <div class="card bg-light">
+                                <div class="card-header">
+                                    <h6 class="mb-0">
+                                        <i class="fas fa-list me-1"></i>Học viên đã chọn (<span id="selectedCount">0</span>)
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div id="selectedStudentsList">
+                                        <!-- Selected students will be listed here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="ThangNam" class="form-label">
+                                <i class="fas fa-calendar-alt me-1"></i>Tháng/Năm áp dụng
+                            </label>
+                            <input type="month" id="ThangNam" name="ThangNam" class="form-control" />
+                            <div class="form-text">
+                                <i class="fas fa-info-circle me-1"></i>Tháng và năm bắt đầu áp dụng tăng cường
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="GhiChu" class="form-label">
+                                <i class="fas fa-sticky-note me-1"></i>Ghi chú
+                            </label>
+                            <textarea id="GhiChu" name="GhiChu" class="form-control" rows="3" 
+                                      placeholder="Ghi chú về việc áp dụng tăng cường cho học viên này..."></textarea>
+                            <div class="form-text">
+                                <i class="fas fa-info-circle me-1"></i>Ghi chú bổ sung (không bắt buộc)
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-success" id="submitBtn" disabled>
+                                <i class="fas fa-save me-1"></i>Thêm tăng cường cho <span id="submitCount">0</span> học viên
+                            </button>
+                            <a asp-action="Details" asp-route-id="@Model.MaTangLuong" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-1"></i>Hủy
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function() {
+            // Auto focus on student select
+            $('#MaHocVien').focus();
+            
+            // Set default month to current month
+            var today = new Date();
+            var currentMonth = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0');
+            $('#ThangNam').val(currentMonth);
+            
+            // Handle multiple student selection
+            $('#MaHocVien').on('change', function() {
+                updateSelectedStudents();
+            });
+            
+            function updateSelectedStudents() {
+                var selectedOptions = $('#MaHocVien option:selected');
+                var selectedCount = selectedOptions.length;
+                
+                if (selectedCount > 0) {
+                    // Update selected count
+                    $('#selectedCount').text(selectedCount);
+                    $('#submitCount').text(selectedCount);
+                    
+                    // Show selected students section
+                    $('#selectedStudents').show();
+                    
+                    // Build selected students list
+                    var studentsList = '';
+                    selectedOptions.each(function() {
+                        var studentText = $(this).text();
+                        var studentValue = $(this).val();
+                        studentsList += `
+                            <div class="d-flex justify-content-between align-items-center mb-2 p-2 border rounded">
+                                <div>
+                                    <strong class="text-primary">${studentText}</strong>
+                                    <br><small class="text-muted">Mã: ${studentValue}</small>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-danger remove-student" data-value="${studentValue}">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        `;
+                    });
+                    $('#selectedStudentsList').html(studentsList);
+                    
+                    // Enable submit button
+                    $('#submitBtn').prop('disabled', false);
+                } else {
+                    $('#selectedStudents').hide();
+                    $('#submitBtn').prop('disabled', true);
+                }
+            }
+            
+            // Remove student from selection
+            $(document).on('click', '.remove-student', function() {
+                var value = $(this).data('value');
+                $('#MaHocVien option[value="' + value + '"]').prop('selected', false);
+                updateSelectedStudents();
+            });
+            
+            // Form submission
+            $('form').on('submit', function(e) {
+                e.preventDefault();
+                
+                var selectedOptions = $('#MaHocVien option:selected');
+                
+                if (selectedOptions.length === 0) {
+                    alert('Vui lòng chọn ít nhất một học viên!');
+                    return false;
+                }
+                
+                // Create hidden inputs for each selected student
+                selectedOptions.each(function() {
+                    var studentValue = $(this).val();
+                    var hiddenInput = $('<input>').attr({
+                        type: 'hidden',
+                        name: 'SelectedStudents',
+                        value: studentValue
+                    });
+                    $('form').append(hiddenInput);
+                });
+                
+                // Update button
+                var $btn = $('#submitBtn');
+                $btn.prop('disabled', true);
+                $btn.html('<i class="fas fa-spinner fa-spin me-1"></i>Đang thêm...');
+                
+                // Submit form
+                $('form')[0].submit();
+            });
+        });
+    </script>
+}

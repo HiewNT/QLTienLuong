@@ -1,0 +1,189 @@
+@model QLTienLuong.Models.KhenThuongKyLuat
+
+@{
+    ViewData["Title"] = "Sửa Khen thưởng/Kỷ luật";
+}
+
+<div class="fade-in">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="mb-1">
+                <i class="fas fa-edit me-2"></i>Sửa Khen thưởng/Kỷ luật
+            </h4>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item">
+                        <a asp-action="Index">
+                            <i class="fas fa-award me-1"></i>Khen thưởng/Kỷ luật
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active">Sửa: @Model.MaQuyetDinh</li>
+                </ol>
+            </nav>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i>Quay lại
+        </a>
+    </div>
+
+    <!-- Form -->
+    <div class="card @(Model.LoaiHinh?.Contains("Khen") == true ? "border-success" : Model.LoaiHinh?.Contains("luật") == true ? "border-danger" : "")">
+        <div class="card-body">
+            <form asp-action="Edit" method="post" novalidate>
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="MaQuyetDinh" class="form-label">
+                                <i class="fas fa-id-card me-1"></i>Mã Quyết định
+                            </label>
+                            <input asp-for="MaQuyetDinh" class="form-control" readonly style="background-color: #f8f9fa;" />
+                            <div class="form-text">
+                                <i class="fas fa-lock me-1"></i>Mã không thể thay đổi
+                            </div>
+                            <span asp-validation-for="MaQuyetDinh" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="MaHocVien" class="form-label">
+                                <i class="fas fa-user me-1"></i>Học viên <span class="text-danger">*</span>
+                            </label>
+                            <select asp-for="MaHocVien" asp-items="ViewBag.MaHocVien" class="form-select">
+                                <option value="">-- Chọn học viên --</option>
+                            </select>
+                            <span asp-validation-for="MaHocVien" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="LoaiHinh" class="form-label">
+                                <i class="fas fa-list me-1"></i>Loại hình <span class="text-danger">*</span>
+                            </label>
+                            <select asp-for="LoaiHinh" class="form-select" id="loaiHinhSelect">
+                                <option value="">-- Chọn loại hình --</option>
+                                <option value="Khen thưởng">Khen thưởng</option>
+                                <option value="Kỷ luật">Kỷ luật</option>
+                            </select>
+                            <span asp-validation-for="LoaiHinh" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="NgayQuyetDinh" class="form-label">
+                                <i class="fas fa-calendar me-1"></i>Ngày Quyết định <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="NgayQuyetDinh" class="form-control" type="date" />
+                            <span asp-validation-for="NgayQuyetDinh" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="SoTien" class="form-label">
+                                <i class="fas fa-money-bill me-1"></i>Số tiền (VNĐ)
+                            </label>
+                            <input asp-for="SoTien" class="form-control" type="number" min="0" placeholder="0" />
+                            <div class="form-text">
+                                <i class="fas fa-info-circle me-1"></i>Để trống hoặc 0 nếu không có tiền thưởng/phạt
+                            </div>
+                            <span asp-validation-for="SoTien" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="LyDo" class="form-label">
+                        <i class="fas fa-file-text me-1"></i>Lý do <span class="text-danger">*</span>
+                    </label>
+                    <textarea asp-for="LyDo" class="form-control" rows="4" placeholder="Nhập lý do khen thưởng/kỷ luật chi tiết..."></textarea>
+                    <div class="form-text">
+                        <i class="fas fa-info-circle me-1"></i>Mô tả chi tiết lý do khen thưởng hoặc kỷ luật
+                    </div>
+                    <span asp-validation-for="LyDo" class="text-danger"></span>
+                </div>
+
+                <!-- Actions -->
+                <div class="d-flex gap-2 mt-4">
+                    <button type="submit" class="btn @(Model.LoaiHinh?.Contains("Khen") == true ? "btn-success" : Model.LoaiHinh?.Contains("luật") == true ? "btn-danger" : "btn-primary")">
+                        @if (Model.LoaiHinh?.Contains("Khen") == true)
+                        {
+                            <i class="fas fa-award me-1"></i><span>Cập nhật khen thưởng</span>
+                        }
+                        else if (Model.LoaiHinh?.Contains("luật") == true)
+                        {
+                            <i class="fas fa-exclamation-triangle me-1"></i><span>Cập nhật kỷ luật</span>
+                        }
+                        else
+                        {
+                            <i class="fas fa-save me-1"></i><span>Cập nhật</span>
+                        }
+                    </button>
+                    <a asp-action="Details" asp-route-id="@Model.MaQuyetDinh" class="btn btn-info">
+                        <i class="fas fa-eye me-1"></i>Xem chi tiết
+                    </a>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-times me-1"></i>Hủy bỏ
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function() {
+            // Auto focus first editable input
+            $('#MaHocVien').focus();
+            
+            // Update form styling based on selection
+            $('#loaiHinhSelect').on('change', function() {
+                var value = $(this).val();
+                var $card = $('.card');
+                var $submitBtn = $('button[type="submit"]');
+                var $btnText = $submitBtn.find('span');
+                
+                if (value.includes('Khen')) {
+                    $card.removeClass('border-danger').addClass('border-success');
+                    $submitBtn.removeClass('btn-danger btn-primary').addClass('btn-success');
+                    $submitBtn.find('i').removeClass().addClass('fas fa-award me-1');
+                    $btnText.text('Cập nhật khen thưởng');
+                } else if (value.includes('luật')) {
+                    $card.removeClass('border-success').addClass('border-danger');
+                    $submitBtn.removeClass('btn-success btn-primary').addClass('btn-danger');
+                    $submitBtn.find('i').removeClass().addClass('fas fa-exclamation-triangle me-1');
+                    $btnText.text('Cập nhật kỷ luật');
+                } else {
+                    $card.removeClass('border-success border-danger');
+                    $submitBtn.removeClass('btn-success btn-danger').addClass('btn-primary');
+                    $submitBtn.find('i').removeClass().addClass('fas fa-save me-1');
+                    $btnText.text('Cập nhật');
+                }
+            });
+            
+            // Form validation styling
+            $('form').on('submit', function() {
+                var $btn = $('button[type="submit"]');
+                $btn.prop('disabled', true);
+                
+                var originalHtml = $btn.html();
+                $btn.html('<i class="fas fa-spinner fa-spin me-1"></i>Đang cập nhật...');
+                
+                setTimeout(function() {
+                    $btn.prop('disabled', false);
+                    $btn.html(originalHtml);
+                }, 3000);
+            });
+        });
+    </script>
+}

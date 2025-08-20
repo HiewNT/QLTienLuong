@@ -1,0 +1,327 @@
+@model QLTienLuong.Models.HocVien
+
+@{
+    ViewData["Title"] = "Chi tiết Học viên";
+}
+
+<div class="fade-in">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="mb-1">
+                <i class="fas fa-user me-2"></i>Chi tiết Học viên
+            </h4>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item">
+                        <a asp-action="Index">
+                            <i class="fas fa-users me-1"></i>Học viên Quốc tế
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active">@Model.HoTen</li>
+                </ol>
+            </nav>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Edit" asp-route-id="@Model.MaHocVien" class="btn btn-warning">
+                <i class="fas fa-edit me-1"></i>Chỉnh sửa
+            </a>
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Quay lại
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Thông tin cá nhân -->
+        <div class="col-lg-8 mb-4">
+            <div class="card border-primary">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user me-2"></i>Thông tin cá nhân
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label class="form-label text-muted">
+                                <i class="fas fa-id-card me-1"></i>Mã Học viên
+                            </label>
+                            <p class="form-control-plaintext fw-bold text-primary fs-5">@Html.DisplayFor(model => model.MaHocVien)</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted">
+                                <i class="fas fa-user me-1"></i>Họ và Tên
+                            </label>
+                            <p class="form-control-plaintext fw-bold fs-5">@Html.DisplayFor(model => model.HoTen)</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted">
+                                <i class="fas fa-birthday-cake me-1"></i>Ngày sinh
+                            </label>
+                            <p class="form-control-plaintext fw-bold">
+                                @if (Model.NgaySinh.HasValue)
+                                {
+                                    @Model.NgaySinh.Value.ToString("dd/MM/yyyy")
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Chưa xác định</span>
+                                }
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted">
+                                <i class="fas fa-flag me-1"></i>Quốc tịch
+                            </label>
+                            <div class="form-control-plaintext">
+                                @if (Model.MaQuocTichNavigation != null)
+                                {
+                                    <span class="badge bg-success fs-6">
+                                        <i class="fas fa-flag me-1"></i>@Model.MaQuocTichNavigation.TenQuocTich
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Chưa xác định</span>
+                                }
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Thông tin học tập -->
+        <div class="col-lg-4 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-graduation-cap me-2"></i>Thông tin học tập
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="info-group">
+                        @if (!string.IsNullOrEmpty(Model.Khoa))
+                        {
+                            <div class="info-item mb-3">
+                                <i class="fas fa-calendar-alt text-muted me-2"></i>
+                                <small class="text-muted">Khóa:</small>
+                                <br><strong class="text-primary">@Model.Khoa</strong>
+                            </div>
+                        }
+                        
+                        @if (!string.IsNullOrEmpty(Model.Lop))
+                        {
+                            <div class="info-item mb-3">
+                                <i class="fas fa-users text-muted me-2"></i>
+                                <small class="text-muted">Lớp:</small>
+                                <br><strong>@Model.Lop</strong>
+                            </div>
+                        }
+                        
+                        @if (!string.IsNullOrEmpty(Model.Nganh))
+                        {
+                            <div class="info-item mb-3">
+                                <i class="fas fa-book text-muted me-2"></i>
+                                <small class="text-muted">Ngành:</small>
+                                <br><strong>@Model.Nganh</strong>
+                            </div>
+                        }
+                        
+                        @if (!string.IsNullOrEmpty(Model.DonVi))
+                        {
+                            <div class="info-item mb-3">
+                                <i class="fas fa-building text-muted me-2"></i>
+                                <small class="text-muted">Đơn vị:</small>
+                                <br><strong>@Model.DonVi</strong>
+                            </div>
+                        }
+                        
+                        @if (Model.NamTotNghiep.HasValue)
+                        {
+                            <div class="info-item mb-3">
+                                <i class="fas fa-calendar-check text-muted me-2"></i>
+                                <small class="text-muted">Năm tốt nghiệp:</small>
+                                <br><strong class="text-success">@Model.NamTotNghiep.Value</strong>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Khen thưởng/Kỷ luật -->
+    @if (Model.KhenThuongKyLuats.Any())
+    {
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fas fa-award me-2"></i>Khen thưởng/Kỷ luật (@Model.KhenThuongKyLuats.Count)
+                </h5>
+                <a asp-controller="KhenThuongKyLuat" asp-action="Index" class="btn btn-outline-primary">
+                    <i class="fas fa-external-link-alt me-1"></i>Xem tất cả
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Mã QĐ</th>
+                                <th>Loại hình</th>
+                                <th>Ngày QĐ</th>
+                                <th>Số tiền</th>
+                                <th>Lý do</th>
+                                <th width="80">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var kt in Model.KhenThuongKyLuats.Take(5))
+                            {
+                                <tr>
+                                    <td>
+                                        <strong class="text-primary">@kt.MaQuyetDinh</strong>
+                                    </td>
+                                    <td>
+                                        @if (kt.LoaiHinh?.Contains("Khen") == true)
+                                        {
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-award me-1"></i>@kt.LoaiHinh
+                                            </span>
+                                        }
+                                        else if (kt.LoaiHinh?.Contains("luật") == true)
+                                        {
+                                            <span class="badge bg-danger">
+                                                <i class="fas fa-exclamation-triangle me-1"></i>@kt.LoaiHinh
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">@kt.LoaiHinh</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (kt.NgayQuyetDinh.HasValue)
+                                        {
+                                            <span>@kt.NgayQuyetDinh.Value.ToString("dd/MM/yyyy")</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">--</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (kt.SoTien.HasValue && kt.SoTien > 0)
+                                        {
+                                            <strong class="@(kt.LoaiHinh?.Contains("Khen") == true ? "text-success" : "text-danger")">
+                                                @kt.SoTien.Value.ToString("N0") VNĐ
+                                            </strong>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">--</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <span class="text-truncate d-inline-block" style="max-width: 150px;" title="@kt.LyDo">
+                                            @(kt.LyDo ?? "--")
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a asp-controller="KhenThuongKyLuat" asp-action="Details" asp-route-id="@kt.MaQuyetDinh" 
+                                           class="btn btn-outline-info" title="Chi tiết">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                
+                @if (Model.KhenThuongKyLuats.Count > 5)
+                {
+                    <div class="text-center mt-3">
+                        <p class="text-muted">
+                            Hiển thị 5 trong số @Model.KhenThuongKyLuats.Count quyết định. 
+                            <a asp-controller="KhenThuongKyLuat" asp-action="Index" class="text-decoration-none">
+                                Xem tất cả <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </p>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- Phụ cấp -->
+    @if (Model.PhuCapHocViens.Any())
+    {
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fas fa-money-bill me-2"></i>Phụ cấp hiện tại (@Model.PhuCapHocViens.Count)
+                </h5>
+                <a asp-controller="PhuCapHocVien" asp-action="Index" class="btn btn-outline-success">
+                    <i class="fas fa-external-link-alt me-1"></i>Xem tất cả
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    @foreach (var pc in Model.PhuCapHocViens)
+                    {
+                        <div class="col-md-6 mb-3">
+                            <div class="card border-success">
+                                <div class="card-body">
+                                    <h6 class="card-title">
+                                        <i class="fas fa-hand-holding-usd text-success me-2"></i>
+                                        @pc.MaPhuCapNavigation?.TenPhuCap
+                                    </h6>
+                                    <p class="card-text">
+                                        <small class="text-muted">Ngày áp dụng:</small>
+                                        @if (pc.NgayApDung.HasValue)
+                                        {
+                                            <strong>@pc.NgayApDung.Value.ToString("dd/MM/yyyy")</strong>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">Chưa xác định</span>
+                                        }
+                                    </p>
+                                    @if (pc.MaPhuCapNavigation?.MucPhuCapCoBan.HasValue == true)
+                                    {
+                                        <p class="card-text">
+                                            <small class="text-muted">Mức cơ bản:</small>
+                                            <strong class="text-success">@pc.MaPhuCapNavigation.MucPhuCapCoBan.Value.ToString("N0") VNĐ</strong>
+                                        </p>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+</div>
+
+<style>
+.info-item {
+    padding: 0.5rem 0;
+}
+
+media print {
+    .btn, .breadcrumb, nav {
+        display: none !important;
+    }
+    
+    .card {
+        border: 1px solid #000 !important;
+        box-shadow: none !important;
+    }
+}
+</style>

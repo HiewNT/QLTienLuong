@@ -1,0 +1,129 @@
+@model QLTienLuong.Models.TangLuong
+
+@{
+    ViewData["Title"] = "Thêm Tăng cường";
+}
+
+<div class="fade-in">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="mb-1">
+                <i class="fas fa-plus-circle me-2"></i>Thêm Tăng cường mới
+            </h4>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item">
+                        <a asp-action="Index">
+                            <i class="fas fa-arrow-up me-1"></i>Tăng cường
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active">Thêm mới</li>
+                </ol>
+            </nav>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i>Quay lại
+        </a>
+    </div>
+
+    <!-- Form -->
+    <div class="card border-success">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">
+                <i class="fas fa-arrow-up me-2"></i>Thông tin Tăng cường
+            </h5>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create" method="post" novalidate>
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="MucLuongTang" class="form-label">
+                                <i class="fas fa-money-bill me-1"></i>Mức lương tăng (VNĐ) <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="MucLuongTang" class="form-control" type="number" placeholder="VD: 1000000" id="mucLuongInput" min="0" step="1000" />
+                            <div class="form-text">
+                                <i class="fas fa-info-circle me-1"></i>Nhập số tiền tăng cường (VNĐ)
+                            </div>
+                            <span asp-validation-for="MucLuongTang" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="NgayTangLuong" class="form-label">
+                                <i class="fas fa-calendar me-1"></i>Ngày tăng cường <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="NgayTangLuong" class="form-control" type="date" />
+                            <div class="form-text">
+                                <i class="fas fa-info-circle me-1"></i>Ngày có hiệu lực tăng cường
+                            </div>
+                            <span asp-validation-for="NgayTangLuong" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="LyDoTangLuong" class="form-label">
+                        <i class="fas fa-info-circle me-1"></i>Lý do tăng cường
+                    </label>
+                    <textarea asp-for="LyDoTangLuong" class="form-control" rows="3" 
+                              placeholder="Nhập lý do tăng cường..."></textarea>
+                    <div class="form-text">
+                        <i class="fas fa-info-circle me-1"></i>Mô tả lý do tăng cường (không bắt buộc)
+                    </div>
+                    <span asp-validation-for="LyDoTangLuong" class="text-danger"></span>
+                </div>
+
+                <!-- Actions -->
+                <div class="d-flex gap-2 mt-4">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save me-1"></i>Lưu tăng cường
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-times me-1"></i>Hủy bỏ
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function() {
+            // Auto focus first input
+            $('#MucLuongTang').focus();
+            
+            // Set default date to today
+            var today = new Date().toISOString().split('T')[0];
+            $('#NgayTangLuong').val(today);
+            
+            // Number input validation
+            $('#mucLuongInput').on('input', function() {
+                var value = $(this).val();
+                if (value && value < 0) {
+                    $(this).val(0);
+                }
+            });
+
+
+            
+            // Form validation styling
+            $('form').on('submit', function() {
+                var $btn = $('button[type="submit"]');
+                $btn.prop('disabled', true);
+                $btn.html('<i class="fas fa-spinner fa-spin me-1"></i>Đang lưu...');
+                
+                setTimeout(function() {
+                    $btn.prop('disabled', false);
+                    $btn.html('<i class="fas fa-save me-1"></i>Lưu tăng cường');
+                }, 3000);
+            });
+        });
+    </script>
+}

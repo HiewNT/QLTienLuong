@@ -1,0 +1,252 @@
+@model QLTienLuong.Models.TangLuong
+
+@{
+    ViewData["Title"] = "Chi tiết Tăng cường";
+}
+
+<div class="fade-in">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="mb-1">
+                <i class="fas fa-arrow-up me-2 text-success"></i>Chi tiết Tăng cường
+            </h4>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a asp-action="Index">Danh sách Tăng cường</a></li>
+                    <li class="breadcrumb-item active">Chi tiết</li>
+                </ol>
+            </nav>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="AddStudentForm" asp-route-id="@Model.MaTangLuong" class="btn btn-success">
+                <i class="fas fa-user-plus me-1"></i>Thêm học viên
+            </a>
+            <a asp-action="Edit" asp-route-id="@Model.MaTangLuong" class="btn btn-warning">
+                <i class="fas fa-edit me-1"></i>Sửa
+            </a>
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Quay lại
+            </a>
+        </div>
+    </div>
+
+
+
+    <div class="row">
+        <!-- Danh sách học viên (Bên trái) -->
+        <div class="col-lg-8 mb-4">
+            <div class="card border-info">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-users me-2"></i>Học viên được áp dụng (@Model.HocVienTangLuongs.Count)
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th width="50"><i class="fas fa-hashtag me-1"></i>STT</th>
+                                    <th width="120"><i class="fas fa-id-card me-1"></i>Mã HV</th>
+                                    <th><i class="fas fa-user me-1"></i>Họ và tên</th>
+                                    <th width="100"><i class="fas fa-graduation-cap me-1"></i>Khóa</th>
+                                    <th width="80"><i class="fas fa-users me-1"></i>Lớp</th>
+                                    <th width="100" class="text-center"><i class="fas fa-calendar me-1"></i>Tháng/Năm</th>
+                                    <th width="100" class="text-center"><i class="fas fa-cogs me-1"></i>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    int stt = 1;
+                                }
+                                @foreach (var hocVienTangLuong in Model.HocVienTangLuongs)
+                                {
+                                    <tr>
+                                        <td class="text-center"><span class="badge bg-primary">@stt</span></td>
+                                        <td><span class="badge bg-secondary">@hocVienTangLuong.MaHocVien</span></td>
+                                        <td><div class="fw-bold">@hocVienTangLuong.MaHocVienNavigation?.HoTen</div></td>
+                                        <td class="text-center">
+                                            @if (!string.IsNullOrEmpty(hocVienTangLuong.MaHocVienNavigation?.Khoa))
+                                            {
+                                                <span class="badge bg-info">@hocVienTangLuong.MaHocVienNavigation.Khoa</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">--</span>
+                                            }
+                                        </td>
+                                        <td class="text-center">
+                                            @if (!string.IsNullOrEmpty(hocVienTangLuong.MaHocVienNavigation?.Lop))
+                                            {
+                                                <span class="badge bg-success">@hocVienTangLuong.MaHocVienNavigation.Lop</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">--</span>
+                                            }
+                                        </td>
+                                        <td class="text-center">
+                                            @if (hocVienTangLuong.ThangNam.HasValue)
+                                            {
+                                                <span class="badge bg-info">@hocVienTangLuong.ThangNam.Value.ToString("MM/yyyy")</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">--</span>
+                                            }
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <a asp-controller="HocVien" asp-action="Details" asp-route-id="@hocVienTangLuong.MaHocVien" 
+                                                   class="btn btn-outline-info" title="Xem học viên">
+                                                    <i class="fas fa-user"></i>
+                                                </a>
+                                                <button class="btn btn-outline-danger remove-tangluong" 
+                                                        data-id="@hocVienTangLuong.MaHocVien" 
+                                                        title="Xóa tăng cường">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    stt++;
+                                }
+                                @if (!Model.HocVienTangLuongs.Any())
+                                {
+                                    <tr>
+                                        <td colspan="7" class="text-center text-muted py-3">
+                                            <i class="fas fa-info-circle me-1"></i>Chưa có học viên nào được áp dụng
+                                        </td>
+                                    </tr>
+                                }
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Thông tin chi tiết (Bên phải) -->
+        <div class="col-lg-4 mb-4">
+            <div class="card border-primary">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>Thông tin chi tiết
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label text-muted">
+                            <i class="fas fa-hashtag me-1"></i>Mã tăng cường
+                        </label>
+                        <p class="form-control-plaintext fw-bold text-primary">@Model.MaTangLuong</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted">
+                            <i class="fas fa-calendar me-1"></i>Ngày tăng cường
+                        </label>
+                        <div class="form-control-plaintext">
+                            @if (Model.NgayTangLuong.HasValue)
+                            {
+                                <span class="badge bg-info">@Model.NgayTangLuong.Value.ToString("dd/MM/yyyy")</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Chưa xác định</span>
+                            }
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted">
+                            <i class="fas fa-coins me-1"></i>Mức tăng cường
+                        </label>
+                        <div class="form-control-plaintext">
+                            @if (Model.MucLuongTang.HasValue)
+                            {
+                                <div class="text-success fw-bold">@Model.MucLuongTang.Value.ToString("N0") VNĐ</div>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Chưa xác định</span>
+                            }
+                        </div>
+                    </div>
+                    @if (!string.IsNullOrEmpty(Model.LyDoTangLuong))
+                    {
+                        <div class="mb-3">
+                            <label class="form-label text-muted">
+                                <i class="fas fa-info-circle me-1"></i>Lý do
+                            </label>
+                            <div class="form-control-plaintext">
+                                <div>@Model.LyDoTangLuong</div>
+                            </div>
+                        </div>
+                    }
+                    <div class="mb-3">
+                        <label class="form-label text-muted">
+                            <i class="fas fa-check-circle me-1"></i>Trạng thái
+                        </label>
+                        <div class="form-control-plaintext">
+                            @if (Model.NgayTangLuong.HasValue)
+                            {
+                                @if (Model.NgayTangLuong.Value <= DateOnly.FromDateTime(DateTime.Now))
+                                {
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-check-circle me-1"></i>Đã có hiệu lực
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning">
+                                        <i class="fas fa-clock me-1"></i>Chờ hiệu lực
+                                    </span>
+                                }
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">
+                                    <i class="fas fa-question-circle me-1"></i>Chưa xác định
+                                </span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Remove học viên from tăng cường
+            $('.remove-tangluong').on('click', function() {
+                if (confirm('Bạn có chắc chắn muốn xóa học viên này khỏi tăng cường?')) {
+                    const $btn = $(this);
+                    const maHocVien = $btn.data('id');
+                    
+                    $btn.prop('disabled', true);
+                    $btn.html('<i class="fas fa-spinner fa-spin"></i>');
+                    
+                    $.post('@Url.Action("RemoveStudent", new { id = Model.MaTangLuong })', { maHocVien: maHocVien })
+                        .done(function(response) {
+                            if (response.success) {
+        
+                                location.reload();
+                            } else {
+                                alert('Có lỗi xảy ra!');
+                                $btn.prop('disabled', false);
+                                $btn.html('<i class="fas fa-trash"></i>');
+                            }
+                        })
+                        .fail(function() {
+                            alert('Có lỗi xảy ra khi xóa học viên!');
+                            $btn.prop('disabled', false);
+                            $btn.html('<i class="fas fa-trash"></i>');
+                        });
+                }
+            });
+        });
+    </script>
+}

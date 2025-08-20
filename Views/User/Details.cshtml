@@ -1,0 +1,218 @@
+@model QLTienLuong.Models.User
+
+@{
+    ViewData["Title"] = "Chi tiết Người dùng";
+}
+
+<div class="fade-in">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="mb-1">
+                <i class="fas fa-user me-2 text-info"></i>Chi tiết Người dùng
+            </h4>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a asp-action="Index">Danh sách Người dùng</a></li>
+                    <li class="breadcrumb-item active">Chi tiết</li>
+                </ol>
+            </nav>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Edit" asp-route-id="@Model.MaUser" class="btn btn-warning">
+                <i class="fas fa-edit me-1"></i>Sửa
+            </a>
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Quay lại
+            </a>
+        </div>
+    </div>
+
+
+
+    <!-- Details Card -->
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>Thông tin Người dùng
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold text-muted">
+                                    <i class="fas fa-hashtag me-1"></i>Mã người dùng
+                                </label>
+                                <div class="form-control-plaintext">
+                                    <span class="badge bg-primary fs-6">@Model.MaUser</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold text-muted">
+                                    <i class="fas fa-user-circle me-1"></i>Tên đăng nhập
+                                </label>
+                                <div class="form-control-plaintext">
+                                    <span class="text-primary fw-bold fs-5">@Model.Username</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold text-muted">
+                                    <i class="fas fa-user me-1"></i>Học viên liên kết
+                                </label>
+                                <div class="form-control-plaintext">
+                                    @if (Model.MaHocVienNavigation != null)
+                                    {
+                                        <div>
+                                            <strong>@Model.MaHocVienNavigation.HoTen</strong>
+                                            <br><small class="text-muted">@Model.MaHocVien</small>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Không liên kết với học viên nào</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold text-muted">
+                                    <i class="fas fa-shield-alt me-1"></i>Vai trò
+                                </label>
+                                <div class="form-control-plaintext">
+                                    @if (Model.MaRoleNavigation != null)
+                                    {
+                                        <span class="badge bg-info fs-6">
+                                            <i class="fas fa-shield-alt me-1"></i>@Model.MaRoleNavigation.TenRole
+                                        </span>
+                                        @if (!string.IsNullOrEmpty(Model.MaRoleNavigation.MoTa))
+                                        {
+                                            <br><small class="text-muted">@Model.MaRoleNavigation.MoTa</small>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Chưa có vai trò</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-muted">
+                            <i class="fas fa-toggle-on me-1"></i>Trạng thái tài khoản
+                        </label>
+                        <div class="form-control-plaintext">
+                            @if (Model.Active == true)
+                            {
+                                <span class="badge bg-success fs-6">
+                                    <i class="fas fa-check-circle me-1"></i>Hoạt động
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary fs-6">
+                                    <i class="fas fa-times-circle me-1"></i>Không hoạt động
+                                </span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Status Card -->
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-shield-alt me-2"></i>Bảo mật
+                    </h6>
+                </div>
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="fas fa-lock fa-3x text-success mb-2"></i>
+                        <h5 class="text-success">Mật khẩu đã mã hóa</h5>
+                        <p class="text-muted mb-0">Sử dụng thuật toán SHA256</p>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card mt-3">
+                <div class="card-header bg-warning text-dark">
+                    <h6 class="mb-0">
+                        <i class="fas fa-bolt me-2"></i>Thao tác nhanh
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a asp-action="Edit" asp-route-id="@Model.MaUser" class="btn btn-warning btn-sm">
+                            <i class="fas fa-edit me-1"></i>Chỉnh sửa
+                        </a>
+                        @if (Model.Active == true)
+                        {
+                            <button class="btn btn-outline-secondary btn-sm toggle-active" data-id="@Model.MaUser">
+                                <i class="fas fa-toggle-off me-1"></i>Vô hiệu hóa
+                            </button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-outline-success btn-sm toggle-active" data-id="@Model.MaUser">
+                                <i class="fas fa-toggle-on me-1"></i>Kích hoạt
+                            </button>
+                        }
+                        <a asp-action="Delete" asp-route-id="@Model.MaUser" class="btn btn-outline-danger btn-sm">
+                            <i class="fas fa-trash me-1"></i>Xóa
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Toggle active status
+            $('.toggle-active').on('click', function() {
+                const $btn = $(this);
+                const userId = $btn.data('id');
+                
+                if (confirm('Bạn có chắc chắn muốn thay đổi trạng thái người dùng này?')) {
+                    $btn.prop('disabled', true);
+                    $btn.html('<i class="fas fa-spinner fa-spin me-1"></i>Đang xử lý...');
+                    
+                    $.post('@Url.Action("ToggleActive")', { id: userId })
+                        .done(function(response) {
+                            if (response.success) {
+                                location.reload();
+                            } else {
+                                alert('Có lỗi xảy ra!');
+                                $btn.prop('disabled', false);
+                                $btn.html('<i class="fas fa-toggle-on me-1"></i>Kích hoạt');
+                            }
+                        })
+                        .fail(function() {
+                            alert('Có lỗi xảy ra khi cập nhật trạng thái!');
+                            $btn.prop('disabled', false);
+                            $btn.html('<i class="fas fa-toggle-on me-1"></i>Kích hoạt');
+                        });
+                }
+            });
+        });
+    </script>
+}

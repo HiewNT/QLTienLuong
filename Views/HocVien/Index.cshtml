@@ -1,0 +1,230 @@
+@model IEnumerable<QLTienLuong.Models.HocVien>
+
+@{
+    ViewData["Title"] = "Học viên Quốc tế";
+}
+
+<div class="fade-in">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="mb-1">
+                <i class="fas fa-users me-2"></i>Quản lý Học viên Quốc tế
+            </h4>
+            <p class="text-muted mb-0">Danh sách học viên quốc tế trong hệ thống</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="ExportExcel" class="btn btn-success">
+                <i class="fas fa-file-excel me-1"></i>Xuất Excel
+            </a>
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i>Thêm mới
+            </a>
+        </div>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="row g-2">
+                <div class="col-md-6">
+                    <label class="form-label">Quốc tịch</label>
+                    <select id="filterQuocTich" class="form-select">
+                        <option value="">Tất cả quốc tịch</option>
+                        @foreach (var quocTich in Model.Select(h => h.MaQuocTichNavigation?.TenQuocTich).Distinct().Where(q => !string.IsNullOrEmpty(q)).OrderBy(q => q))
+                        {
+                            <option value="@quocTich">@quocTich</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Khóa</label>
+                    <select id="filterKhoa" class="form-select">
+                        <option value="">Tất cả khóa</option>
+                        @foreach (var khoa in Model.Select(h => h.Khoa).Distinct().Where(k => !string.IsNullOrEmpty(k)).OrderBy(k => k))
+                        {
+                            <option value="@khoa">@khoa</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table Card -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover" id="hocVienTable">
+                    <thead class="table-dark">
+                        <tr>
+                            <th width="80">ID</th>
+                            <th width="200">Họ và Tên</th>
+                            <th width="100">Ngày sinh</th>
+                            <th width="80">Khóa</th>
+                            <th width="80">Lớp</th>
+                            <th width="120">Ngành</th>
+                            <th width="100">Quốc tịch</th>
+                            <th width="80">Năm TN</th>
+                            <th width="100">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <span class="badge bg-primary">@Html.DisplayFor(modelItem => item.MaHocVien)</span>
+                                </td>
+                                <td>
+                                    <div class="fw-bold">@Html.DisplayFor(modelItem => item.HoTen)</div>
+                                </td>
+                                <td class="text-center">
+                                    @if (item.NgaySinh.HasValue)
+                                    {
+                                        <span>@item.NgaySinh.Value.ToString("dd/MM/yyyy")</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">--</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    @if (!string.IsNullOrEmpty(item.Khoa))
+                                    {
+                                        <span class="badge bg-primary">@item.Khoa</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">--</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    @if (!string.IsNullOrEmpty(item.Lop))
+                                    {
+                                        <span class="badge bg-success">@item.Lop</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">--</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.Nganh))
+                                    {
+                                        <div>@item.Nganh</div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">--</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    @if (item.MaQuocTichNavigation != null)
+                                    {
+                                        <span class="badge bg-info">@item.MaQuocTichNavigation.TenQuocTich</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">--</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    @if (item.NamTotNghiep.HasValue)
+                                    {
+                                        <span>@item.NamTotNghiep.Value</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">--</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a asp-action="Details" asp-route-id="@item.MaHocVien" 
+                                           class="btn btn-outline-info" title="Chi tiết">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@item.MaHocVien" 
+                                           class="btn btn-outline-warning" title="Sửa">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.MaHocVien" 
+                                           class="btn btn-outline-danger" title="Xóa">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            
+            @if (!Model.Any())
+            {
+                <div class="text-center py-5">
+                    <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">Chưa có dữ liệu</h5>
+                    <p class="text-muted">Nhấn "Thêm mới" để thêm học viên đầu tiên.</p>
+                    <a asp-action="Create" class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i>Thêm học viên mới
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Initialize DataTable
+            var table = $('#hocVienTable').DataTable({
+                language: {
+                    "sProcessing": "Đang xử lý...",
+                    "sLengthMenu": "Xem _MENU_ mục",
+                    "sZeroRecords": "Không tìm thấy dữ liệu",
+                    "sInfo": "Đang xem _START_ đến _END_ trong tổng số _TOTAL_ mục",
+                    "sInfoEmpty": "Đang xem 0 đến 0 trong tổng số 0 mục",
+                    "sInfoFiltered": "(được lọc từ _MAX_ mục)",
+                    "sInfoPostFix": "",
+                    "sSearch": "Tìm kiếm:",
+                    "sUrl": "",
+                    "oPaginate": {
+                        "sFirst": "Đầu",
+                        "sPrevious": "Trước",
+                        "sNext": "Tiếp",
+                        "sLast": "Cuối"
+                    }
+                },
+                responsive: true,
+                pageLength: 25,
+                order: [[0, 'asc']],
+                columnDefs: [
+                    { orderable: false, targets: [8] } // Thao tác column
+                ]
+            });
+
+            // Filter by nationality
+            $('#filterQuocTich').on('change', function() {
+                var selectedQuocTich = $(this).val();
+                if (selectedQuocTich) {
+                    table.column(6).search(selectedQuocTich).draw(); // Quốc tịch column
+                } else {
+                    table.column(6).search('').draw();
+                }
+            });
+
+            // Filter by course
+            $('#filterKhoa').on('change', function() {
+                var selectedKhoa = $(this).val();
+                if (selectedKhoa) {
+                    table.column(3).search(selectedKhoa).draw(); // Khóa column
+                } else {
+                    table.column(3).search('').draw();
+                }
+            });
+        });
+    </script>
+}

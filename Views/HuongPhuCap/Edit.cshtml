@@ -1,0 +1,301 @@
+@model QLTienLuong.Models.HuongPhuCapViewModel
+
+@{
+    ViewData["Title"] = "Chỉnh sửa Hưởng Phụ cấp";
+}
+
+<div class="fade-in">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="mb-0">
+            <i class="fas fa-edit me-2"></i>Chỉnh sửa Hưởng Phụ cấp
+        </h3>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-1"></i>Quay lại
+        </a>
+    </div>
+
+    <!-- Form -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="fas fa-edit me-2"></i>Cập nhật thông tin Hưởng Phụ cấp
+            </h5>
+        </div>
+        <div class="card-body">
+            <form asp-action="Edit" method="post">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                <input type="hidden" asp-for="MaHuongPhuCap" />
+                <input type="hidden" name="TongPhuCap" value="@Model.TinhTongPhuCap" />
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="MaHocVien" class="form-label">
+                                <i class="fas fa-user me-1"></i>Học viên <span class="text-danger">*</span>
+                            </label>
+                            <select asp-for="MaHocVien" class="form-control" asp-items="ViewBag.MaHocVien">
+                                <option value="">-- Chọn học viên --</option>
+                            </select>
+                            <span asp-validation-for="MaHocVien" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="ThangNam" class="form-label">
+                                <i class="fas fa-calendar me-1"></i>Tháng/Năm
+                            </label>
+                            <input asp-for="ThangNam" class="form-control" type="month" />
+                            <span asp-validation-for="ThangNam" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label asp-for="DoanPhi" class="form-label">
+                                <i class="fas fa-hand-holding-usd me-1"></i>Đoàn Phí (VNĐ)
+                            </label>
+                            <input asp-for="DoanPhi" class="form-control money-input" type="text" placeholder="Nhập số tiền" />
+                            <span asp-validation-for="DoanPhi" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label asp-for="LopHoc" class="form-label">
+                                <i class="fas fa-graduation-cap me-1"></i>Lớp Học (VNĐ)
+                            </label>
+                            <input asp-for="LopHoc" class="form-control money-input" type="text" placeholder="Nhập số tiền" />
+                            <span asp-validation-for="LopHoc" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label asp-for="TrUung" class="form-label">
+                                <i class="fas fa-heart me-1"></i>Trợ Ứng (VNĐ)
+                            </label>
+                            <input asp-for="TrUung" class="form-control money-input" type="text" placeholder="Nhập số tiền" />
+                            <span asp-validation-for="TrUung" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <!-- Thông tin phụ cấp cụ thể -->
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-graduation-cap me-1"></i>Phụ cấp cơ bản (VNĐ)
+                            </label>
+                            <input class="form-control" type="text" readonly 
+                                   value="@Model.PhuCapCoBan?.ToString("N0") VNĐ" />
+                            <small class="text-muted">Phụ cấp NCS/Đại học</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-calendar me-1"></i>Phụ cấp T7+CN (VNĐ)
+                            </label>
+                            <input class="form-control" type="text" readonly 
+                                   value="@Model.PhuCapT7CN?.ToString("N0") VNĐ" />
+                            <small class="text-muted">Phụ cấp thứ 7 + Chủ nhật</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-milk me-1"></i>Phụ cấp sữa (VNĐ)
+                            </label>
+                            <input class="form-control" type="text" readonly 
+                                   value="@Model.PhuCapSua?.ToString("N0") VNĐ" />
+                            <small class="text-muted">Phụ cấp sữa</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-money-bill me-1"></i>Tổng Phụ cấp (VNĐ)
+                            </label>
+                            <input class="form-control" type="text" readonly 
+                                   value="@Model.TinhTongPhuCap?.ToString("N0") VNĐ" />
+                            <small class="text-muted">Tổng từ các danh mục phụ cấp</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-calculator me-1"></i>Còn Nhận (VNĐ)
+                            </label>
+                            <input class="form-control" type="text" readonly 
+                                   value="@Model.TinhConNhan?.ToString("N0") VNĐ" />
+                            <small class="text-muted">Tổng - Đoàn - Lớp - Ứng</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                                                         <label asp-for="Ky" class="form-label">
+                                 <i class="fas fa-signature me-1"></i>Ký nhận
+                             </label>
+                                                         <input asp-for="Ky" class="form-control" placeholder="Ví dụ: Đã ký, Chưa ký..." />
+                            <span asp-validation-for="Ky" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Thông tin danh mục phụ cấp được áp dụng -->
+                @if (Model.DanhMucPhuCaps.Any())
+                {
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="card border-info">
+                                <div class="card-header bg-info text-white">
+                                    <h6 class="mb-0"><i class="fas fa-list me-2"></i>Danh mục phụ cấp được áp dụng</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-sm">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>STT</th>
+                                                    <th>Mã phụ cấp</th>
+                                                    <th>Tên phụ cấp</th>
+                                                    <th>Mức phụ cấp</th>
+                                                    <th>Ngày áp dụng</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @{
+                                                    int stt = 1;
+                                                }
+                                                @foreach (var phuCap in Model.DanhMucPhuCaps)
+                                                {
+                                                    <tr>
+                                                        <td>@stt</td>
+                                                        <td><span class="badge bg-secondary">@phuCap.MaPhuCap</span></td>
+                                                        <td><strong>@phuCap.TenPhuCap</strong></td>
+                                                        <td>
+                                                            @if (phuCap.MucPhuCap.HasValue)
+                                                            {
+                                                                <span class="text-success fw-bold">@phuCap.MucPhuCap.Value.ToString("N0") VNĐ</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="text-muted">--</span>
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            @if (phuCap.NgayApDung.HasValue)
+                                                            {
+                                                                <span class="badge bg-info">@phuCap.NgayApDung.Value.ToString("dd/MM/yyyy")</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="text-muted">--</span>
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                    stt++;
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <hr class="my-4">
+
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary me-3">
+                        <i class="fas fa-save me-1"></i>Cập nhật
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-times me-1"></i>Hủy bỏ
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function() {
+            // Auto focus first editable input
+            $('#MaHocVien').focus();
+            
+            // Money input formatting
+            $('.money-input').on('input', function() {
+                var value = $(this).val().replace(/[^\d]/g, '');
+                if (value) {
+                    value = parseInt(value).toLocaleString('vi-VN');
+                    $(this).val(value);
+                }
+                calculateValues();
+            });
+            
+            // Calculate Tổng Phụ cấp và Còn Nhận
+            function calculateValues() {
+                // Lấy giá trị từ các input và loại bỏ dấu phẩy, dấu chấm
+                var doanPhi = parseFloat($('#DoanPhi').val().replace(/[^\d]/g, '')) || 0;
+                var lopHoc = parseFloat($('#LopHoc').val().replace(/[^\d]/g, '')) || 0;
+                var trUung = parseFloat($('#TrUung').val().replace(/[^\d]/g, '')) || 0;
+                
+                // Lấy tổng phụ cấp từ ViewModel (tổng của tất cả các danh mục phụ cấp được áp dụng)
+                var tongPhuCap = @(Model.TinhTongPhuCap ?? 0);
+                $('#tongPhuCapDisplay').val(tongPhuCap.toLocaleString('vi-VN') + ' VNĐ');
+                
+                // Tính còn nhận: Tổng phụ cấp - Đoàn phí - Lớp học - Ứng trước
+                var conNhan = tongPhuCap - doanPhi - lopHoc - trUung;
+                $('#conNhanDisplay').val(conNhan.toLocaleString('vi-VN') + ' VNĐ');
+            }
+            
+            // Format money inputs on page load
+            $('.money-input').each(function() {
+                var value = $(this).val();
+                if (value && value !== '0') {
+                    var numericValue = value.replace(/[^\d]/g, '');
+                    if (numericValue) {
+                        $(this).val(parseInt(numericValue).toLocaleString('vi-VN'));
+                    }
+                }
+            });
+            
+            // Calculate on page load
+            calculateValues();
+            
+            // Form validation styling
+            $('form').on('submit', function() {
+                // Chuyển đổi giá trị tiền về số nguyên trước khi submit
+                $('.money-input').each(function() {
+                    var value = $(this).val();
+                    if (value) {
+                        var numericValue = value.replace(/[^\d]/g, '');
+                        if (numericValue) {
+                            $(this).val(numericValue);
+                        }
+                    }
+                });
+                
+                var $btn = $('button[type="submit"]');
+                $btn.prop('disabled', true);
+                $btn.html('<i class="fas fa-spinner fa-spin me-1"></i>Đang cập nhật...');
+            });
+        });
+    </script>
+}
+

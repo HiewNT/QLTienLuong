@@ -1,0 +1,79 @@
+@model QLTienLuong.Models.HocVien
+
+@{
+    ViewData["Title"] = "Xóa Học viên";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-user-times"></i> Xóa Học viên Quốc tế
+                    </h3>
+                    <div class="card-tools">
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Quay lại
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-danger">
+                        <h4><i class="fas fa-exclamation-triangle"></i> Cảnh báo!</h4>
+                        <p>Bạn có chắc chắn muốn xóa học viên này không? Hành động này không thể hoàn tác.</p>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <dl class="row">
+                                <dt class="col-sm-4">Mã Học Viên:</dt>
+                                <dd class="col-sm-8">@Model.MaHocVien</dd>
+
+                                <dt class="col-sm-4">Họ và Tên:</dt>
+                                <dd class="col-sm-8">@Model.HoTen</dd>
+
+                                <dt class="col-sm-4">Ngày Sinh:</dt>
+                                <dd class="col-sm-8">@(Model.NgaySinh?.ToString("dd/MM/yyyy"))</dd>
+
+                            </dl>
+                        </div>
+                        <div class="col-md-6">
+                            <dl class="row">
+                                <dt class="col-sm-4">Khóa:</dt>
+                                <dd class="col-sm-8">@Model.Khoa</dd>
+
+                                <dt class="col-sm-4">Lớp:</dt>
+                                <dd class="col-sm-8">@Model.Lop</dd>
+
+                                <dt class="col-sm-4">Ngành:</dt>
+                                <dd class="col-sm-8">@Model.Nganh</dd>
+
+                                <dt class="col-sm-4">Đơn Vị:</dt>
+                                <dd class="col-sm-8">@Model.DonVi</dd>
+
+                                <dt class="col-sm-4">Quốc Tịch:</dt>
+                                <dd class="col-sm-8">@Model.MaQuocTichNavigation?.TenQuocTich</dd>
+
+                                <dt class="col-sm-4">Năm Tốt Nghiệp:</dt>
+                                <dd class="col-sm-8">@Model.NamTotNghiep</dd>
+                            </dl>
+                        </div>
+                    </div>
+
+                    <form asp-action="Delete" method="post" class="mt-4">
+                        <input type="hidden" asp-for="MaHocVien" />
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash"></i> Xác nhận xóa
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Hủy
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

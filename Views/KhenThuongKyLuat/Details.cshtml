@@ -1,0 +1,283 @@
+@model QLTienLuong.Models.KhenThuongKyLuat
+
+@{
+    ViewData["Title"] = "Chi tiết Khen thưởng/Kỷ luật";
+    var isKhenThuong = Model.LoaiHinh?.Contains("Khen") == true;
+    var isKyLuat = Model.LoaiHinh?.Contains("luật") == true;
+}
+
+<div class="fade-in">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="mb-1">
+                @if (isKhenThuong)
+                {
+                    <i class="fas fa-award text-success me-2"></i>
+                }
+                else if (isKyLuat)
+                {
+                    <i class="fas fa-exclamation-triangle text-danger me-2"></i>
+                }
+                else
+                {
+                    <i class="fas fa-file-alt me-2"></i>
+                }
+                Chi tiết @(isKhenThuong ? "Khen thưởng" : isKyLuat ? "Kỷ luật" : "Quyết định")
+            </h4>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item">
+                        <a asp-action="Index">
+                            <i class="fas fa-award me-1"></i>Khen thưởng/Kỷ luật
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active">@Model.MaQuyetDinh</li>
+                </ol>
+            </nav>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Edit" asp-route-id="@Model.MaQuyetDinh" class="btn btn-warning">
+                <i class="fas fa-edit me-1"></i>Chỉnh sửa
+            </a>
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Quay lại
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Thông tin học viên (Bên trái) -->
+        <div class="col-lg-8 mb-4">
+            <div class="card border-info">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user me-2"></i>Thông tin học viên
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                                                         <div class="mb-3">
+                                 <label class="form-label text-muted">
+                                     <i class="fas fa-id-card me-1"></i>Mã học viên
+                                 </label>
+                                 <p class="form-control-plaintext fw-bold text-primary">@Model.MaHocVien</p>
+                             </div>
+                        </div>
+                        <div class="col-md-6">
+                                                         <div class="mb-3">
+                                 <label class="form-label text-muted">
+                                     <i class="fas fa-user me-1"></i>Họ và tên
+                                 </label>
+                                 <p class="form-control-plaintext fw-bold">@Model.MaHocVienNavigation?.HoTen</p>
+                             </div>
+                        </div>
+                        <div class="col-md-6">
+                                                         <div class="mb-3">
+                                 <label class="form-label text-muted">
+                                     <i class="fas fa-graduation-cap me-1"></i>Khóa
+                                 </label>
+                                 <div class="form-control-plaintext">
+                                     @if (!string.IsNullOrEmpty(Model.MaHocVienNavigation?.Khoa))
+                                     {
+                                         <span class="badge bg-info">@Model.MaHocVienNavigation.Khoa</span>
+                                     }
+                                     else
+                                     {
+                                         <span class="text-muted">Chưa xác định</span>
+                                     }
+                                 </div>
+                             </div>
+                        </div>
+                        <div class="col-md-6">
+                                                         <div class="mb-3">
+                                 <label class="form-label text-muted">
+                                     <i class="fas fa-users me-1"></i>Lớp
+                                 </label>
+                                 <div class="form-control-plaintext">
+                                     @if (!string.IsNullOrEmpty(Model.MaHocVienNavigation?.Lop))
+                                     {
+                                         <span class="badge bg-success">@Model.MaHocVienNavigation.Lop</span>
+                                     }
+                                     else
+                                     {
+                                         <span class="text-muted">Chưa xác định</span>
+                                     }
+                                 </div>
+                             </div>
+                        </div>
+                        <div class="col-md-6">
+                                                         <div class="mb-3">
+                                 <label class="form-label text-muted">
+                                     <i class="fas fa-flag me-1"></i>Quốc tịch
+                                 </label>
+                                 <div class="form-control-plaintext">
+                                     @if (Model.MaHocVienNavigation?.MaQuocTichNavigation != null)
+                                     {
+                                         <span class="badge bg-warning">@Model.MaHocVienNavigation.MaQuocTichNavigation.TenQuocTich</span>
+                                     }
+                                     else
+                                     {
+                                         <span class="text-muted">Chưa xác định</span>
+                                     }
+                                 </div>
+                             </div>
+                        </div>
+                        <div class="col-md-6">
+                                                         <div class="mb-3">
+                                 <label class="form-label text-muted">
+                                     <i class="fas fa-calendar me-1"></i>Ngày sinh
+                                 </label>
+                                 <div class="form-control-plaintext">
+                                     @if (Model.MaHocVienNavigation?.NgaySinh.HasValue == true)
+                                     {
+                                         <span>@Model.MaHocVienNavigation.NgaySinh.Value.ToString("dd/MM/yyyy")</span>
+                                     }
+                                     else
+                                     {
+                                         <span class="text-muted">Chưa xác định</span>
+                                     }
+                                 </div>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Thông tin quyết định (Bên phải) -->
+        <div class="col-lg-4 mb-4">
+            <div class="card @(isKhenThuong ? "border-success" : isKyLuat ? "border-danger" : "border-primary")">
+                <div class="card-header @(isKhenThuong ? "bg-success text-white" : isKyLuat ? "bg-danger text-white" : "bg-primary text-white")">
+                    <h5 class="mb-0">
+                        @if (isKhenThuong)
+                        {
+                            <i class="fas fa-award me-2"></i><span>Thông tin Khen thưởng</span>
+                        }
+                        else if (isKyLuat)
+                        {
+                            <i class="fas fa-exclamation-triangle me-2"></i><span>Thông tin Kỷ luật</span>
+                        }
+                        else
+                        {
+                            <i class="fas fa-info-circle me-2"></i><span>Thông tin Quyết định</span>
+                        }
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label text-muted">
+                            <i class="fas fa-id-card me-1"></i>Mã Quyết định
+                        </label>
+                        <p class="form-control-plaintext fw-bold text-primary">@Html.DisplayFor(model => model.MaQuyetDinh)</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted">
+                            <i class="fas fa-calendar me-1"></i>Ngày Quyết định
+                        </label>
+                        <div class="form-control-plaintext">
+                            @if (Model.NgayQuyetDinh.HasValue)
+                            {
+                                <span class="badge bg-info">@Model.NgayQuyetDinh.Value.ToString("dd/MM/yyyy")</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Chưa xác định</span>
+                            }
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted">
+                            <i class="fas fa-list me-1"></i>Loại hình
+                        </label>
+                        <div class="form-control-plaintext">
+                            @if (isKhenThuong)
+                            {
+                                <span class="badge bg-success">
+                                    <i class="fas fa-award me-1"></i>@Model.LoaiHinh
+                                    </span>
+                                }
+                                else if (isKyLuat)
+                                {
+                                    <span class="badge bg-danger">
+                                        <i class="fas fa-exclamation-triangle me-1"></i>@Model.LoaiHinh
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">@Model.LoaiHinh</span>
+                                }
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-muted">
+                                <i class="fas fa-money-bill me-1"></i>Số tiền
+                            </label>
+                            <div class="form-control-plaintext">
+                                @if (Model.SoTien.HasValue && Model.SoTien > 0)
+                                {
+                                    <div class="fw-bold @(isKhenThuong ? "text-success" : isKyLuat ? "text-danger" : "text-primary")">
+                                        @Model.SoTien.Value.ToString("N0") VNĐ
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Không có</span>
+                                }
+                            </div>
+                        </div>
+                        @if (!string.IsNullOrEmpty(Model.LyDo))
+                        {
+                            <div class="mb-3">
+                                <label class="form-label text-muted">
+                                    <i class="fas fa-file-text me-1"></i>Lý do
+                                </label>
+                                <div class="form-control-plaintext">
+                                    <div>@Model.LyDo</div>
+                                </div>
+                            </div>
+                        }
+                        <div class="mb-3">
+                            <label class="form-label text-muted">
+                                <i class="fas fa-check-circle me-1"></i>Trạng thái
+                            </label>
+                            <div class="form-control-plaintext">
+                                @if (Model.NgayQuyetDinh.HasValue)
+                                {
+                                    @if (Model.NgayQuyetDinh.Value <= DateOnly.FromDateTime(DateTime.Now))
+                                    {
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-check-circle me-1"></i>Đã có hiệu lực
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning">
+                                            <i class="fas fa-clock me-1"></i>Chờ hiệu lực
+                                        </span>
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">
+                                        <i class="fas fa-question-circle me-1"></i>Chưa xác định
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+                      
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Empty script for future functionality
+        });
+    </script>
+}

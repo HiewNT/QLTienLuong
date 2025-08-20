@@ -1,0 +1,139 @@
+@model IEnumerable<QLTienLuong.Models.QuocTich>
+
+@{
+    ViewData["Title"] = "Quốc tịch";
+}
+
+<div class="fade-in">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="mb-1">
+                <i class="fas fa-flag me-2"></i>Quản lý Quốc tịch
+            </h4>
+            <p class="text-muted mb-0">Danh sách các quốc tịch trong hệ thống</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i>Thêm mới
+            </a>
+        </div>
+    </div>
+
+
+
+    <!-- Table Card -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover" id="quocTichTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th width="80">Mã QT</th>
+                            <th width="200">Tên Quốc tịch</th>
+                            <th width="100">Số học viên</th>
+                            <th>Học viên tiêu biểu</th>
+                            <th width="120">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="text-center">
+                                    <span class="badge bg-primary">@Html.DisplayFor(modelItem => item.MaQuocTich)</span>
+                                </td>
+                                <td>
+                                    <div class="fw-bold">@Html.DisplayFor(modelItem => item.TenQuocTich)</div>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-info">@item.HocViens.Count</span>
+                                </td>
+                                <td>
+                                    @if (item.HocViens.Any())
+                                    {
+                                        <div>
+                                            @foreach (var hocVien in item.HocViens.Take(2))
+                                            {
+                                                <div>@hocVien.HoTen</div>
+                                            }
+                                            @if (item.HocViens.Count > 2)
+                                            {
+                                                <small class="text-muted">và @(item.HocViens.Count - 2) khác...</small>
+                                            }
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Chưa có học viên</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a asp-action="Details" asp-route-id="@item.MaQuocTich" 
+                                           class="btn btn-outline-info" title="Chi tiết">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@item.MaQuocTich" 
+                                           class="btn btn-outline-warning" title="Sửa">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.MaQuocTich" 
+                                           class="btn btn-outline-danger" title="Xóa">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            
+            @if (!Model.Any())
+            {
+                <div class="text-center py-5">
+                    <i class="fas fa-flag fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">Chưa có dữ liệu</h5>
+                    <p class="text-muted">Nhấn "Thêm mới" để thêm quốc tịch đầu tiên.</p>
+                    <a asp-action="Create" class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i>Thêm quốc tịch mới
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Initialize DataTable
+            $('#quocTichTable').DataTable({
+                language: {
+                    "sProcessing": "Đang xử lý...",
+                    "sLengthMenu": "Xem _MENU_ mục",
+                    "sZeroRecords": "Không tìm thấy dữ liệu",
+                    "sInfo": "Đang xem _START_ đến _END_ trong tổng số _TOTAL_ mục",
+                    "sInfoEmpty": "Đang xem 0 đến 0 trong tổng số 0 mục",
+                    "sInfoFiltered": "(được lọc từ _MAX_ mục)",
+                    "sInfoPostFix": "",
+                    "sSearch": "Tìm kiếm:",
+                    "sUrl": "",
+                    "oPaginate": {
+                        "sFirst": "Đầu",
+                        "sPrevious": "Trước",
+                        "sNext": "Tiếp",
+                        "sLast": "Cuối"
+                    }
+                },
+                responsive: true,
+                pageLength: 25,
+                order: [[0, 'asc']],
+                columnDefs: [
+                    { orderable: false, targets: [3] }
+                ]
+            });
+        });
+    </script>
+}

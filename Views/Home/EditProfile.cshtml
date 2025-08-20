@@ -1,0 +1,141 @@
+@model QLTienLuong.Models.EditProfileViewModel
+@{
+    ViewData["Title"] = "Chỉnh sửa hồ sơ";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0">
+                        <i class="fas fa-edit"></i> Chỉnh sửa hồ sơ cá nhân
+                    </h4>
+                </div>
+                <div class="card-body">
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger">
+                            <ul class="mb-0">
+                                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                                {
+                                    <li>@error.ErrorMessage</li>
+                                }
+                            </ul>
+                        </div>
+                    }
+
+                    <form asp-action="EditProfile" method="post">
+                        <div class="row">
+                            <!-- Thông tin cơ bản -->
+                            <div class="col-md-6">
+                                <div class="card border-primary">
+                                    <div class="card-header bg-light">
+                                        <h5 class="mb-0">
+                                            <i class="fas fa-info-circle text-primary"></i> Thông tin cơ bản
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label asp-for="Username" class="form-label"></label>
+                                            <input asp-for="Username" class="form-control" readonly />
+                                            <small class="text-muted">Tên đăng nhập không thể thay đổi</small>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label asp-for="HoTen" class="form-label"></label>
+                                            <input asp-for="HoTen" class="form-control" />
+                                            <span asp-validation-for="HoTen" class="text-danger"></span>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label asp-for="NgaySinh" class="form-label"></label>
+                                            <input asp-for="NgaySinh" class="form-control" type="date" />
+                                            <span asp-validation-for="NgaySinh" class="text-danger"></span>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label asp-for="MaQuocTich" class="form-label"></label>
+                                            <select asp-for="MaQuocTich" class="form-select" asp-items="ViewBag.MaQuocTich">
+                                                <option value="">-- Chọn quốc tịch --</option>
+                                            </select>
+                                            <span asp-validation-for="MaQuocTich" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Thông tin học tập -->
+                            <div class="col-md-6">
+                                <div class="card border-success">
+                                    <div class="card-header bg-light">
+                                        <h5 class="mb-0">
+                                            <i class="fas fa-graduation-cap text-success"></i> Thông tin học tập
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label asp-for="Khoa" class="form-label"></label>
+                                            <input asp-for="Khoa" class="form-control" />
+                                            <span asp-validation-for="Khoa" class="text-danger"></span>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label asp-for="Lop" class="form-label"></label>
+                                            <input asp-for="Lop" class="form-control" />
+                                            <span asp-validation-for="Lop" class="text-danger"></span>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label asp-for="Nganh" class="form-label"></label>
+                                            <input asp-for="Nganh" class="form-control" />
+                                            <span asp-validation-for="Nganh" class="text-danger"></span>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label asp-for="DonVi" class="form-label"></label>
+                                            <input asp-for="DonVi" class="form-control" />
+                                            <span asp-validation-for="DonVi" class="text-danger"></span>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label asp-for="NamTotNghiep" class="form-label"></label>
+                                            <input asp-for="NamTotNghiep" class="form-control" type="number" min="1900" max="2100" />
+                                            <span asp-validation-for="NamTotNghiep" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Các hành động -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-warning">
+                                        <i class="fas fa-save"></i> Lưu thay đổi
+                                    </button>
+                                    <a asp-controller="Home" asp-action="Profile" class="btn btn-secondary">
+                                        <i class="fas fa-times"></i> Hủy bỏ
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Format ngày sinh cho input date
+            var ngaySinh = '@Model.NgaySinh?.ToString("yyyy-MM-dd")';
+            if (ngaySinh && ngaySinh !== '') {
+                $('#NgaySinh').val(ngaySinh);
+            }
+        });
+    </script>
+}

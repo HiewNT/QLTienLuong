@@ -1,0 +1,362 @@
+@model IEnumerable<QLTienLuong.Models.HuongPhuCapViewModel>
+
+@{
+    ViewData["Title"] = "Hưởng Phụ cấp";
+}
+
+<div class="fade-in">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h5 class="mb-1">
+                <i class="fas fa-hand-holding-usd me-2"></i>Quản lý Hưởng Phụ cấp
+            </h5>
+            <small class="text-muted">Danh sách phụ cấp học viên nhận được</small>
+        </div>
+        <div class="d-flex gap-2 align-items-center">
+            <div class="d-flex align-items-center gap-2">
+                <label for="filterThangNam" class="form-label mb-0 small">Tháng/Năm:</label>
+                <select id="filterThangNam" class="form-select form-select-sm" style="width: auto;">
+                    @if (ViewBag.ThangNamList != null)
+                    {
+                        foreach (var month in ViewBag.ThangNamList)
+                        {
+                            var displayMonth = DateTime.ParseExact(month, "yyyy-MM", null).ToString("MM/yyyy");
+                            if (ViewBag.SelectedThangNam == month)
+                            {
+                                <option value="@month" selected>@displayMonth</option>
+                            }
+                            else
+                            {
+                                <option value="@month">@displayMonth</option>
+                            }
+                        }
+                    }
+                </select>
+            </div>
+            <a href="javascript:void(0)" onclick="exportExcel()" class="btn btn-success btn-sm">
+                <i class="fas fa-file-excel me-1"></i>Xuất Excel
+            </a>
+        </div>
+    </div>
+
+    <!-- Bảng chính -->
+    <div class="card">
+        <div class="card-body p-2">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover table-sm" id="huongPhuCapTable">
+                    <thead class="table-dark">
+                        <tr>
+                            <th width="50">STT</th>
+                            <th width="200">Tên</th>
+                            <th width="80">Khóa</th>
+                            <th width="100">Tháng/Năm</th>
+                            <th width="100">Phụ cấp</th>
+                            <th width="80">T7+CN</th>
+                            <th width="80">Sữa</th>
+                            <th width="100">Tổng</th>
+                            <th width="80">Đoàn</th>
+                            <th width="80">Lớp</th>
+                            <th width="80">Ứng</th>
+                            <th width="100">Nhận</th>
+                            <th width="60">Ký</th>
+                            <th width="100">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int stt = 1;
+                        }
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="text-center">
+                                    <span class="badge bg-primary badge-sm">@stt</span>
+                                </td>
+                                <td>
+                                    <div class="fw-bold small">@item.HoTen</div>
+                                    <small class="text-muted">@item.MaHocVien</small>
+                                </td>
+                                <td class="text-center">
+                                    @if (!string.IsNullOrEmpty(item.Khoa))
+                                    {
+                                        <span class="badge bg-info badge-sm">@item.Khoa</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">--</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    @if (item.ThangNam.HasValue)
+                                    {
+                                        <span class="badge bg-secondary badge-sm">@item.ThangNam.Value.ToString("MM/yyyy")</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">--</span>
+                                    }
+                                </td>
+                                <td class="text-end">
+                                    @if (item.PhuCapCoBan.HasValue && item.PhuCapCoBan.Value > 0)
+                                    {
+                                        <div class="fw-bold text-primary small">@item.PhuCapCoBan.Value.ToString("N0")</div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">--</span>
+                                    }
+                                </td>
+                                <td class="text-end">
+                                    @if (item.PhuCapT7CN.HasValue && item.PhuCapT7CN.Value > 0)
+                                    {
+                                        <div class="text-info small">@item.PhuCapT7CN.Value.ToString("N0")</div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">--</span>
+                                    }
+                                </td>
+                                <td class="text-end">
+                                    @if (item.PhuCapSua.HasValue && item.PhuCapSua.Value > 0)
+                                    {
+                                        <div class="text-warning small">@item.PhuCapSua.Value.ToString("N0")</div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">--</span>
+                                    }
+                                </td>
+                                <td class="text-end">
+                                    @if (item.TinhTongPhuCap.HasValue)
+                                    {
+                                        <div class="fw-bold text-success small">@item.TinhTongPhuCap.Value.ToString("N0")</div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">--</span>
+                                    }
+                                </td>
+                                <td class="text-end">
+                                    @if (item.DoanPhi.HasValue && item.DoanPhi.Value > 0)
+                                    {
+                                        <div class="text-primary small">@item.DoanPhi.Value.ToString("N0")</div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">--</span>
+                                    }
+                                </td>
+                                <td class="text-end">
+                                    @if (item.LopHoc.HasValue && item.LopHoc.Value > 0)
+                                    {
+                                        <div class="text-info small">@item.LopHoc.Value.ToString("N0")</div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">--</span>
+                                    }
+                                </td>
+                                <td class="text-end">
+                                    @if (item.TrUung.HasValue && item.TrUung.Value > 0)
+                                    {
+                                        <div class="text-warning small">@item.TrUung.Value.ToString("N0")</div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">--</span>
+                                    }
+                                </td>
+                                <td class="text-end">
+                                    @if (item.TinhConNhan.HasValue)
+                                    {
+                                        <div class="fw-bold text-primary small">@item.TinhConNhan.Value.ToString("N0")</div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">--</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    @if (!string.IsNullOrEmpty(item.Ky))
+                                    {
+                                        <span class="text-muted small">@item.Ky</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">--</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a asp-action="Details" asp-route-id="@item.MaHuongPhuCap" 
+                                           class="btn btn-outline-info btn-sm" title="Chi tiết">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@item.MaHuongPhuCap" 
+                                           class="btn btn-outline-warning btn-sm" title="Sửa">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            stt++;
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    #huongPhuCapTable tbody.loading {
+        opacity: 0.6;
+        pointer-events: none;
+        position: relative;
+    }
+    
+    #huongPhuCapTable tbody.loading::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 20px;
+        height: 20px;
+        margin: -10px 0 0 -10px;
+        border: 2px solid #f3f3f3;
+        border-top: 2px solid #3498db;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        z-index: 1000;
+    }
+    
+    keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</style>
+
+@section Scripts {
+    <style>
+        .table-sm td, .table-sm th {
+            padding: 0.3rem;
+            vertical-align: middle;
+        }
+        .badge-sm {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.5rem;
+        }
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+        .small {
+            font-size: 0.8rem;
+        }
+        .table-responsive {
+            max-height: calc(100vh - 200px);
+            overflow-y: auto;
+        }
+    </style>
+    <script>
+        $(document).ready(function() {
+            // Khởi tạo DataTable
+            var table = $('#huongPhuCapTable').DataTable({
+                language: {
+                    "sProcessing": "Đang xử lý...",
+                    "sLengthMenu": "Xem _MENU_ mục",
+                    "sZeroRecords": "Không tìm thấy dữ liệu",
+                    "sInfo": "Đang xem _START_ đến _END_ trong tổng số _TOTAL_ mục",
+                    "sInfoEmpty": "Đang xem 0 đến 0 trong tổng số 0 mục",
+                    "sInfoFiltered": "(được lọc từ _MAX_ mục)",
+                    "sInfoPostFix": "",
+                    "sSearch": "Tìm kiếm:",
+                    "sUrl": "",
+                    "oPaginate": {
+                        "sFirst": "Đầu",
+                        "sPrevious": "Trước",
+                        "sNext": "Tiếp",
+                        "sLast": "Cuối"
+                    }
+                },
+                responsive: true,
+                order: [[0, 'asc']],
+                columnDefs: [
+                    { orderable: false, targets: -1 }
+                ],
+                pageLength: 25,
+                lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "Tất cả"]]
+            });
+
+            // Không cần tự động filter khi load trang vì đã có dữ liệu từ server
+
+            // Bộ lọc theo tháng/năm
+            $('#filterThangNam').on('change', function() {
+                var selectedMonth = $(this).val();
+                
+                // Hiển thị loading
+                $('#huongPhuCapTable tbody').addClass('loading');
+                
+                // Gọi AJAX để lấy dữ liệu mới
+                $.ajax({
+                    url: '/HuongPhuCap/GetDataByMonth',
+                    type: 'GET',
+                    data: { thangNam: selectedMonth },
+                    success: function(data) {
+                        // Xóa dữ liệu cũ trong DataTable
+                        table.clear();
+                        
+                        // Thêm dữ liệu mới vào DataTable
+                        var stt = 1;
+                        data.forEach(function(item) {
+                            var row = [
+                                '<span class="badge bg-primary badge-sm">' + stt + '</span>',
+                                '<div class="fw-bold small">' + item.hoTen + '</div><small class="text-muted">' + item.maHocVien + '</small>',
+                                item.khoa ? '<span class="badge bg-info badge-sm">' + item.khoa + '</span>' : '<span class="text-muted small">--</span>',
+                                item.thangNam ? '<span class="badge bg-secondary badge-sm">' + item.thangNam + '</span>' : '<span class="text-muted small">--</span>',
+                                item.phuCapCoBan && item.phuCapCoBan > 0 ? '<div class="fw-bold text-primary small">' + item.phuCapCoBan.toLocaleString('vi-VN') + '</div>' : '<span class="text-muted small">--</span>',
+                                item.phuCapT7CN && item.phuCapT7CN > 0 ? '<div class="text-info small">' + item.phuCapT7CN.toLocaleString('vi-VN') + '</div>' : '<span class="text-muted small">--</span>',
+                                item.phuCapSua && item.phuCapSua > 0 ? '<div class="text-warning small">' + item.phuCapSua.toLocaleString('vi-VN') + '</div>' : '<span class="text-muted small">--</span>',
+                                item.tinhTongPhuCap ? '<div class="fw-bold text-success small">' + item.tinhTongPhuCap.toLocaleString('vi-VN') + '</div>' : '<span class="text-muted small">--</span>',
+                                item.doanPhi && item.doanPhi > 0 ? '<div class="text-primary small">' + item.doanPhi.toLocaleString('vi-VN') + '</div>' : '<span class="text-muted small">--</span>',
+                                item.lopHoc && item.lopHoc > 0 ? '<div class="text-info small">' + item.lopHoc.toLocaleString('vi-VN') + '</div>' : '<span class="text-muted small">--</span>',
+                                item.trUung && item.trUung > 0 ? '<div class="text-warning small">' + item.trUung.toLocaleString('vi-VN') + '</div>' : '<span class="text-muted small">--</span>',
+                                item.tinhConNhan ? '<div class="fw-bold text-primary small">' + item.tinhConNhan.toLocaleString('vi-VN') + '</div>' : '<span class="text-muted small">--</span>',
+                                item.ky ? '<span class="text-muted small">' + item.ky + '</span>' : '<span class="text-muted small">--</span>',
+                                '<div class="btn-group btn-group-sm" role="group">' +
+                                '<a href="/HuongPhuCap/Details/' + item.maHuongPhuCap + '" class="btn btn-outline-info btn-sm" title="Chi tiết"><i class="fas fa-eye"></i></a> ' +
+                                '<a href="/HuongPhuCap/Edit/' + item.maHuongPhuCap + '" class="btn btn-outline-warning btn-sm" title="Sửa"><i class="fas fa-edit"></i></a>' +
+                                '</div>'
+                            ];
+                            table.row.add(row);
+                            stt++;
+                        });
+                        
+                        // Vẽ lại DataTable
+                        table.draw();
+                        
+                        // Ẩn loading
+                        $('#huongPhuCapTable tbody').removeClass('loading');
+                    },
+                    error: function() {
+                        alert('Có lỗi xảy ra khi tải dữ liệu!');
+                        $('#huongPhuCapTable tbody').removeClass('loading');
+                    }
+                });
+            });
+
+
+
+
+        });
+
+        // Function to export Excel
+        function exportExcel() {
+            const selectedThangNam = $('#filterThangNam').val();
+            const url = '@Url.Action("ExportExcel", "HuongPhuCap")' + (selectedThangNam ? '?thangNam=' + selectedThangNam : '');
+            window.location.href = url;
+        }
+    </script>
+}
+

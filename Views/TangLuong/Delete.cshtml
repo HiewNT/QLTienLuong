@@ -1,0 +1,175 @@
+@model QLTienLuong.Models.TangLuong
+
+@{
+    ViewData["Title"] = "Xóa Tăng cường";
+}
+
+<div class="fade-in">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="mb-1">
+                <i class="fas fa-trash me-2 text-danger"></i>Xóa Tăng cường
+            </h4>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a asp-action="Index">Danh sách Tăng cường</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Details" asp-route-id="@Model.MaTangLuong">Chi tiết</a></li>
+                    <li class="breadcrumb-item active">Xóa</li>
+                </ol>
+            </nav>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Details" asp-route-id="@Model.MaTangLuong" class="btn btn-info">
+                <i class="fas fa-eye me-1"></i>Xem chi tiết
+            </a>
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Quay lại
+            </a>
+        </div>
+    </div>
+
+    <!-- Warning Alert -->
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <div class="d-flex align-items-center">
+            <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
+            <div>
+                <h5 class="alert-heading mb-1">Cảnh báo!</h5>
+                <p class="mb-0">Bạn có chắc chắn muốn xóa thông tin tăng cường này không? Hành động này không thể hoàn tác.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Card -->
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-trash me-2"></i>Xác nhận xóa Tăng cường
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold text-muted">
+                                    <i class="fas fa-hashtag me-1"></i>Mã tăng cường
+                                </label>
+                                <div class="form-control-plaintext">
+                                    <span class="badge bg-primary fs-6">@Model.MaTangLuong</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold text-muted">
+                                    <i class="fas fa-calendar me-1"></i>Ngày tăng cường
+                                </label>
+                                <div class="form-control-plaintext">
+                                    @if (Model.NgayTangLuong.HasValue)
+                                    {
+                                        <span class="text-success fw-bold">@Model.NgayTangLuong.Value.ToString("dd/MM/yyyy")</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Chưa có ngày</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-muted">
+                            <i class="fas fa-coins me-1"></i>Mức tăng cường
+                        </label>
+                        <div class="form-control-plaintext">
+                            @if (Model.MucLuongTang.HasValue)
+                            {
+                                <span class="text-success fw-bold fs-5">@Model.MucLuongTang.Value.ToString("N0") VNĐ</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Chưa có mức tăng</span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-muted">
+                            <i class="fas fa-info-circle me-1"></i>Lý do tăng cường
+                        </label>
+                        <div class="form-control-plaintext">
+                            @if (!string.IsNullOrEmpty(Model.LyDoTangLuong))
+                            {
+                                <div class="p-3 bg-light rounded">
+                                    <i class="fas fa-quote-left me-2 text-muted"></i>
+                                    @Model.LyDoTangLuong
+                                    <i class="fas fa-quote-right ms-2 text-muted"></i>
+                                </div>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Chưa có lý do</span>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Delete Form -->
+                    <form asp-action="Delete" method="post">
+                        <div class="d-flex gap-2 justify-content-end">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash me-1"></i>Xác nhận xóa
+                            </button>
+                            <a asp-action="Details" asp-route-id="@Model.MaTangLuong" class="btn btn-secondary">
+                                <i class="fas fa-times me-1"></i>Hủy bỏ
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Additional Warning -->
+    <div class="row justify-content-center mt-4">
+        <div class="col-lg-8">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <div class="d-flex align-items-start">
+                        <i class="fas fa-info-circle text-info fa-lg me-3 mt-1"></i>
+                        <div>
+                            <h6 class="card-title">Lưu ý quan trọng:</h6>
+                            <ul class="mb-0">
+                                <li>Việc xóa thông tin tăng cường sẽ xóa vĩnh viễn dữ liệu này khỏi hệ thống</li>
+                                <li>Không thể khôi phục lại dữ liệu đã xóa</li>
+                                <li>Nếu thông tin này đã được áp dụng, hãy cân nhắc kỹ trước khi xóa</li>
+                                <li>Nếu không chắc chắn, hãy sử dụng chức năng "Sửa" thay vì "Xóa"</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Confirm delete with additional warning
+            $('form').on('submit', function(e) {
+                if (!confirm('Bạn có chắc chắn muốn xóa thông tin tăng cường này không?\n\nHành động này không thể hoàn tác!')) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable submit button to prevent double submission
+                var $btn = $('button[type="submit"]');
+                $btn.prop('disabled', true);
+                $btn.html('<i class="fas fa-spinner fa-spin me-1"></i>Đang xóa...');
+            });
+        });
+    </script>
+}

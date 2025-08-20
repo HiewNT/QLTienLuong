@@ -1,0 +1,33 @@
+@{
+    ViewData["Title"] = "Truy cập bị từ chối";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-exclamation-triangle"></i> Truy cập bị từ chối
+                    </h4>
+                </div>
+                <div class="card-body text-center">
+                    <i class="fas fa-lock fa-3x text-danger mb-3"></i>
+                    <h5 class="card-title">Bạn không có quyền truy cập trang này</h5>
+                    <p class="card-text">
+                        Tài khoản của bạn không có đủ quyền để truy cập vào trang này. 
+                        Vui lòng liên hệ quản trị viên nếu bạn cần quyền truy cập.
+                    </p>
+                    <div class="mt-4">
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-primary">
+                            <i class="fas fa-home"></i> Về trang chủ
+                        </a>
+                        <a asp-controller="Account" asp-action="Login" class="btn btn-outline-secondary">
+                            <i class="fas fa-sign-in-alt"></i> Đăng nhập khác
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

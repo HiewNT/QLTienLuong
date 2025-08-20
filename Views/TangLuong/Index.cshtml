@@ -1,0 +1,177 @@
+@model IEnumerable<QLTienLuong.Models.TangLuong>
+
+@{
+    ViewData["Title"] = "Tăng cường";
+}
+
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="mb-1">
+                <i class="fas fa-arrow-up me-2 text-success"></i>Quản lý Tăng cường
+            </h4>
+                            <p class="text-muted mb-0">Danh sách các quyết định tăng cường cho học viên</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i>Thêm tăng cường
+            </a>
+        </div>
+    </div>
+
+    <!-- Table Card -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover" id="tangLuongTable">
+                    <thead class="table-dark">
+                        <tr>
+                            <th><i class="fas fa-hashtag me-1"></i>ID</th>
+                            <th><i class="fas fa-calendar me-1"></i>Ngày</th>
+                            <th><i class="fas fa-info-circle me-1"></i>Lý do</th>
+                            <th><i class="fas fa-coins me-1"></i>Mức</th>
+                            <th><i class="fas fa-users me-1"></i>Số HV</th>
+                            <th><i class="fas fa-check-circle me-1"></i>Trạng thái</th>
+                            <th><i class="fas fa-cogs me-1"></i>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="text-center">
+                                    <span class="badge bg-secondary">
+                                        #@Html.DisplayFor(modelItem => item.MaTangLuong)
+                                    </span>
+                                </td>
+                                
+                                <td class="text-center">
+                                    @if (item.NgayTangLuong.HasValue)
+                                    {
+                                        <span>@item.NgayTangLuong.Value.ToString("dd/MM/yyyy")</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Chưa xác định</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.LyDoTangLuong))
+                                    {
+                                        <div class="fw-bold">@item.LyDoTangLuong</div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Chưa có lý do</span>
+                                    }
+                                </td>
+                                <td class="text-end">
+                                    @if (item.MucLuongTang.HasValue)
+                                    {
+                                        <div class="text-success fw-bold">@(((decimal)item.MucLuongTang.Value).ToString("N0"))</div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">--</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-info">@item.HocVienTangLuongs.Count</span>
+                                </td>
+                                <td class="text-center">
+                                    @if (item.NgayTangLuong.HasValue)
+                                    {
+                                        @if (item.NgayTangLuong.Value <= DateOnly.FromDateTime(DateTime.Now))
+                                        {
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-check-circle me-1"></i>Đã có hiệu lực
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-warning">
+                                                <i class="fas fa-clock me-1"></i>Chờ hiệu lực
+                                            </span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">
+                                            <i class="fas fa-question-circle me-1"></i>Chưa xác định
+                                        </span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a asp-action="Details" asp-route-id="@item.MaTangLuong"
+                                           class="btn btn-outline-info" title="Chi tiết">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a asp-action="AddStudentForm" asp-route-id="@item.MaTangLuong"
+                                           class="btn btn-outline-success" title="Thêm học viên">
+                                            <i class="fas fa-user-plus"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@item.MaTangLuong"
+                                           class="btn btn-outline-warning" title="Chỉnh sửa">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.MaTangLuong"
+                                           class="btn btn-outline-danger" title="Xóa">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            
+            @if (!Model.Any())
+            {
+                <div class="text-center py-5">
+                    <i class="fas fa-arrow-up fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">Chưa có dữ liệu</h5>
+                    <p class="text-muted">Nhấn "Thêm tăng cường" để thêm quyết định tăng cường đầu tiên.</p>
+                    <a asp-action="Create" class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i>Thêm tăng cường mới
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Initialize DataTable
+            $('#tangLuongTable').DataTable({
+                language: {
+                    "sProcessing": "Đang xử lý...",
+                    "sLengthMenu": "Xem _MENU_ mục",
+                    "sZeroRecords": "Không tìm thấy dữ liệu",
+                    "sInfo": "Đang xem _START_ đến _END_ trong tổng số _TOTAL_ mục",
+                    "sInfoEmpty": "Đang xem 0 đến 0 trong tổng số 0 mục",
+                    "sInfoFiltered": "(được lọc từ _MAX_ mục)",
+                    "sInfoPostFix": "",
+                    "sSearch": "Tìm kiếm:",
+                    "sUrl": "",
+                    "oPaginate": {
+                        "sFirst": "Đầu",
+                        "sPrevious": "Trước",
+                        "sNext": "Tiếp",
+                        "sLast": "Cuối"
+                    }
+                },
+                responsive: true,
+                pageLength: 25,
+                order: [[2, 'desc']], // Sort by date desc
+                columnDefs: [
+                    { orderable: false, targets: [6] }
+                ]
+            });
+        });
+    </script>
+}

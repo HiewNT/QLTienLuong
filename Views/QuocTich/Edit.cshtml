@@ -1,0 +1,98 @@
+@model QLTienLuong.Models.QuocTich
+
+@{
+    ViewData["Title"] = "Sửa Quốc tịch";
+}
+
+<div class="fade-in">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="mb-1">
+                <i class="fas fa-edit me-2"></i>Sửa thông tin Quốc tịch
+            </h4>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item">
+                        <a asp-action="Index">
+                            <i class="fas fa-flag me-1"></i>Quốc tịch
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active">Sửa: @Model.TenQuocTich</li>
+                </ol>
+            </nav>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i>Quay lại
+        </a>
+    </div>
+
+    <!-- Form -->
+    <div class="card">
+        <div class="card-body">
+            <form asp-action="Edit" method="post" novalidate>
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="MaQuocTich" class="form-label">
+                                <i class="fas fa-id-card me-1"></i>Mã Quốc tịch
+                            </label>
+                            <input asp-for="MaQuocTich" class="form-control" readonly style="background-color: #f8f9fa;" />
+                            <div class="form-text">
+                                <i class="fas fa-lock me-1"></i>Mã không thể thay đổi
+                            </div>
+                            <span asp-validation-for="MaQuocTich" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="TenQuocTich" class="form-label">
+                                <i class="fas fa-flag me-1"></i>Tên Quốc tịch <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="TenQuocTich" class="form-control" placeholder="VD: Việt Nam, Hoa Kỳ, Nhật Bản..." />
+                            <span asp-validation-for="TenQuocTich" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="d-flex gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i>Cập nhật
+                    </button>
+                    <a asp-action="Details" asp-route-id="@Model.MaQuocTich" class="btn btn-info">
+                        <i class="fas fa-eye me-1"></i>Xem chi tiết
+                    </a>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-times me-1"></i>Hủy bỏ
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function() {
+            // Auto focus editable input
+            $('#TenQuocTich').focus().select();
+            
+            // Form validation styling
+            $('form').on('submit', function() {
+                var $btn = $('button[type="submit"]');
+                $btn.prop('disabled', true);
+                $btn.html('<i class="fas fa-spinner fa-spin me-1"></i>Đang cập nhật...');
+                
+                setTimeout(function() {
+                    $btn.prop('disabled', false);
+                    $btn.html('<i class="fas fa-save me-1"></i>Cập nhật');
+                }, 3000);
+            });
+        });
+    </script>
+}
