@@ -23,7 +23,7 @@ namespace QLTienLuong.Controllers
         }
 
         // GET: HuongPhuCap
-        public async Task<IActionResult> Index(string? thangNam = null)
+        public async Task<IActionResult> Index(string? thangNam = null, string? thangNamDen = null)
         {
             // Nếu không có tháng/năm được chọn, sử dụng tháng hiện tại
             if (string.IsNullOrEmpty(thangNam))
@@ -31,11 +31,27 @@ namespace QLTienLuong.Controllers
                 thangNam = DateTime.Now.ToString("yyyy-MM");
             }
 
+            // Tạo danh sách tháng/năm cho dropdown
+            var thangNamList = await GetThangNamList();
+            ViewBag.ThangNamList = thangNamList;
+            ViewBag.SelectedThangNam = thangNam;
+            ViewBag.SelectedThangNamDen = thangNamDen;
+
             // Parse tháng/năm
             if (DateOnly.TryParse(thangNam + "-01", out var selectedDate))
             {
                 var startOfMonth = new DateOnly(selectedDate.Year, selectedDate.Month, 1);
-                var endOfMonth = startOfMonth.AddMonths(1).AddDays(-1);
+                DateOnly endOfMonth;
+
+                // Nếu có tháng/năm đến, sử dụng nó làm kết thúc
+                if (!string.IsNullOrEmpty(thangNamDen) && DateOnly.TryParse(thangNamDen + "-01", out var selectedDateDen))
+                {
+                    endOfMonth = new DateOnly(selectedDateDen.Year, selectedDateDen.Month, 1).AddMonths(1).AddDays(-1);
+                }
+                else
+                {
+                    endOfMonth = startOfMonth.AddMonths(1).AddDays(-1);
+                }
 
                 var huongPhuCaps = await _context.HuongPhuCaps
                     .Include(h => h.MaHocVienNavigation)
@@ -127,7 +143,7 @@ namespace QLTienLuong.Controllers
         }
 
         // GET: HuongPhuCap/GetDataByMonth
-        public async Task<IActionResult> GetDataByMonth(string? thangNam = null)
+        public async Task<IActionResult> GetDataByMonth(string? thangNam = null, string? thangNamDen = null)
         {
             // Nếu không có tháng/năm được chọn, sử dụng tháng hiện tại
             if (string.IsNullOrEmpty(thangNam))
@@ -139,7 +155,17 @@ namespace QLTienLuong.Controllers
             if (DateOnly.TryParse(thangNam + "-01", out var selectedDate))
             {
                 var startOfMonth = new DateOnly(selectedDate.Year, selectedDate.Month, 1);
-                var endOfMonth = startOfMonth.AddMonths(1).AddDays(-1);
+                DateOnly endOfMonth;
+
+                // Nếu có tháng/năm đến, sử dụng nó làm kết thúc
+                if (!string.IsNullOrEmpty(thangNamDen) && DateOnly.TryParse(thangNamDen + "-01", out var selectedDateDen))
+                {
+                    endOfMonth = new DateOnly(selectedDateDen.Year, selectedDateDen.Month, 1).AddMonths(1).AddDays(-1);
+                }
+                else
+                {
+                    endOfMonth = startOfMonth.AddMonths(1).AddDays(-1);
+                }
 
                 var huongPhuCaps = await _context.HuongPhuCaps
                     .Include(h => h.MaHocVienNavigation)
@@ -441,7 +467,7 @@ namespace QLTienLuong.Controllers
 
 
         // GET: HuongPhuCap/ExportExcel
-        public async Task<IActionResult> ExportExcel(string? thangNam = null)
+        public async Task<IActionResult> ExportExcel(string? thangNam = null, string? thangNamDen = null)
         {
             try
             {
@@ -455,7 +481,17 @@ namespace QLTienLuong.Controllers
                 if (DateOnly.TryParse(thangNam + "-01", out var selectedDate))
                 {
                     var startOfMonth = new DateOnly(selectedDate.Year, selectedDate.Month, 1);
-                    var endOfMonth = startOfMonth.AddMonths(1).AddDays(-1);
+                    DateOnly endOfMonth;
+
+                    // Nếu có tháng/năm đến, sử dụng nó làm kết thúc
+                    if (!string.IsNullOrEmpty(thangNamDen) && DateOnly.TryParse(thangNamDen + "-01", out var selectedDateDen))
+                    {
+                        endOfMonth = new DateOnly(selectedDateDen.Year, selectedDateDen.Month, 1).AddMonths(1).AddDays(-1);
+                    }
+                    else
+                    {
+                        endOfMonth = startOfMonth.AddMonths(1).AddDays(-1);
+                    }
 
                     var huongPhuCaps = await _context.HuongPhuCaps
                         .Include(h => h.MaHocVienNavigation)
@@ -568,6 +604,156 @@ namespace QLTienLuong.Controllers
         {
             return _context.HuongPhuCaps.Any(e => e.MaHuongPhuCap == id);
         }
+
+        // GET: HuongPhuCap/GetPhuCapInfo
+        public async Task<IActionResult> GetPhuCapInfo(string maHocVien)
+        {
+            if (string.IsNullOrEmpty(maHocVien))
+            {
+                return Json(new { 
+                    tongPhuCap = 0, 
+                    phuCapCoBan = 0, 
+                    phuCapT7CN = 0, 
+                    phuCapSua = 0 
+                });
+            }
+
+            // Lấy các danh mục phụ cấp được áp dụng cho học viên này
+            var phuCapHocViens = await _context.PhuCapHocViens
+                .Include(p => p.MaPhuCapNavigation)
+                .Where(p => p.MaHocVien == maHocVien)
+                .ToListAsync();
+
+            var danhMucPhuCaps = phuCapHocViens.Select(p => new PhuCapDetail
+            {
+                MaPhuCap = p.MaPhuCap ?? "",
+                TenPhuCap = p.MaPhuCapNavigation?.TenPhuCap ?? "",
+                MucPhuCap = p.MaPhuCapNavigation?.MucPhuCapCoBan,
+                NgayApDung = p.NgayApDung
+            }).ToList();
+
+            // Tính toán các loại phụ cấp cụ thể
+            var phuCapCoBan = danhMucPhuCaps
+                .Where(p => p.TenPhuCap.Contains("NCS") || p.TenPhuCap.Contains("Đại Học"))
+                .Sum(p => p.MucPhuCap ?? 0);
+            
+            var phuCapT7CN = danhMucPhuCaps
+                .Where(p => p.TenPhuCap.Contains("T7 + CN"))
+                .Sum(p => p.MucPhuCap ?? 0);
+            
+            var phuCapSua = danhMucPhuCaps
+                .Where(p => p.TenPhuCap.Contains("Sữa") || p.TenPhuCap.Contains("sữa"))
+                .Sum(p => p.MucPhuCap ?? 0);
+
+            var tongPhuCap = danhMucPhuCaps.Sum(p => p.MucPhuCap ?? 0);
+
+            return Json(new { 
+                tongPhuCap = tongPhuCap, 
+                phuCapCoBan = phuCapCoBan, 
+                phuCapT7CN = phuCapT7CN, 
+                phuCapSua = phuCapSua 
+            });
+        }
+
+        // Helper method để lấy danh sách tháng/năm
+        private async Task<List<string>> GetThangNamList()
+        {
+            var thangNamList = await _context.HuongPhuCaps
+                .Where(h => h.ThangNam.HasValue)
+                .Select(h => h.ThangNam.Value)
+                .Distinct()
+                .ToListAsync();
+
+            // Chuyển đổi sang định dạng yyyy-MM và sắp xếp
+            var formattedList = thangNamList
+                .Select(date => date.ToString("yyyy-MM"))
+                .OrderByDescending(x => x)
+                .ToList();
+
+            // Thêm tháng hiện tại nếu chưa có
+            var currentMonth = DateTime.Now.ToString("yyyy-MM");
+            if (!formattedList.Contains(currentMonth))
+            {
+                formattedList.Insert(0, currentMonth);
+            }
+
+            return formattedList;
+        }
+
+        // GET: HuongPhuCap/Create
+        public async Task<IActionResult> Create()
+        {
+            ViewData["MaHocVien"] = new SelectList(_context.HocViens.Where(h => h.MaHocVien != "AD000"), "MaHocVien", "HoTen");
+            
+            // Tạo danh sách tháng/năm cho dropdown
+            var thangNamList = await GetThangNamList();
+            ViewBag.ThangNamList = thangNamList;
+            
+            return View();
+        }
+
+        // POST: HuongPhuCap/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("MaHocVien,DoanPhi,LopHoc,TrUung,Ky")] HuongPhuCap huongPhuCap, string ThangNam)
+        {
+            // Parse tháng/năm từ form
+            if (string.IsNullOrEmpty(ThangNam))
+            {
+                ModelState.AddModelError("ThangNam", "Vui lòng chọn tháng/năm");
+            }
+            else if (DateOnly.TryParse(ThangNam, out var thangNamDate))
+            {
+                huongPhuCap.ThangNam = thangNamDate;
+            }
+            else
+            {
+                ModelState.AddModelError("ThangNam", "Định dạng tháng/năm không hợp lệ!");
+            }
+
+            if (ModelState.IsValid)
+            {
+
+                // Kiểm tra xem đã có hướng phụ cấp cho học viên này trong tháng này chưa
+                var existing = await _context.HuongPhuCaps
+                    .FirstOrDefaultAsync(h => h.MaHocVien == huongPhuCap.MaHocVien && 
+                                             h.ThangNam == huongPhuCap.ThangNam);
+                
+                if (existing != null)
+                {
+                    ModelState.AddModelError("", "Đã tồn tại hướng phụ cấp cho học viên này trong tháng này!");
+                    ViewData["MaHocVien"] = new SelectList(_context.HocViens.Where(h => h.MaHocVien != "AD000"), "MaHocVien", "HoTen", huongPhuCap.MaHocVien);
+                    var thangNamList = await GetThangNamList();
+                    ViewBag.ThangNamList = thangNamList;
+                    return View(huongPhuCap);
+                }
+
+                // Lấy tổng phụ cấp từ các danh mục phụ cấp được áp dụng cho học viên này
+                var phuCapHocViens = await _context.PhuCapHocViens
+                    .Include(p => p.MaPhuCapNavigation)
+                    .Where(p => p.MaHocVien == huongPhuCap.MaHocVien)
+                    .ToListAsync();
+
+                var tongPhuCap = phuCapHocViens.Sum(p => p.MaPhuCapNavigation?.MucPhuCapCoBan ?? 0);
+                
+                // Gán giá trị TongPhuCap
+                huongPhuCap.TongPhuCap = tongPhuCap;
+                
+                // Tính toán ConNhan: Tổng phụ cấp - Đoàn phí - Lớp học - Ứng trước
+                huongPhuCap.ConNhan = tongPhuCap - (huongPhuCap.DoanPhi ?? 0) - (huongPhuCap.LopHoc ?? 0) - (huongPhuCap.TrUung ?? 0);
+
+                _context.Add(huongPhuCap);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Đã thêm hướng phụ cấp thành công!";
+                return RedirectToAction(nameof(Index));
+            }
+            ViewData["MaHocVien"] = new SelectList(_context.HocViens.Where(h => h.MaHocVien != "AD000"), "MaHocVien", "HoTen", huongPhuCap.MaHocVien);
+            var thangNamList2 = await GetThangNamList();
+            ViewBag.ThangNamList = thangNamList2;
+            return View(huongPhuCap);
+        }
+
+
     }
 }
 

@@ -5,6 +5,15 @@
 }
 
 <div class="fade-in">
+    <!-- Thông báo thành công -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
@@ -15,7 +24,7 @@
         </div>
         <div class="d-flex gap-2 align-items-center">
             <div class="d-flex align-items-center gap-2">
-                <label for="filterThangNam" class="form-label mb-0 small">Tháng/Năm:</label>
+                <label for="filterThangNam" class="form-label mb-0 small">Từ:</label>
                 <select id="filterThangNam" class="form-select form-select-sm" style="width: auto;">
                     @if (ViewBag.ThangNamList != null)
                     {
@@ -34,9 +43,35 @@
                     }
                 </select>
             </div>
-            <a href="javascript:void(0)" onclick="exportExcel()" class="btn btn-success btn-sm">
-                <i class="fas fa-file-excel me-1"></i>Xuất Excel
-            </a>
+            <div class="d-flex align-items-center gap-2">
+                <label for="filterThangNamDen" class="form-label mb-0 small">Đến:</label>
+                <select id="filterThangNamDen" class="form-select form-select-sm" style="width: auto;">
+                    <option value="">-- Tất cả --</option>
+                    @if (ViewBag.ThangNamList != null)
+                    {
+                        foreach (var month in ViewBag.ThangNamList)
+                        {
+                            var displayMonth = DateTime.ParseExact(month, "yyyy-MM", null).ToString("MM/yyyy");
+                            if (ViewBag.SelectedThangNamDen == month)
+                            {
+                                <option value="@month" selected>@displayMonth</option>
+                            }
+                            else
+                            {
+                                <option value="@month">@displayMonth</option>
+                            }
+                        }
+                    }
+                </select>
+            </div>
+            <div class="d-flex gap-1">
+                <a asp-action="Create" class="btn btn-primary btn-sm">
+                    <i class="fas fa-plus me-1"></i>Thêm mới
+                </a>
+                <a href="javascript:void(0)" onclick="exportExcel()" class="btn btn-success btn-sm">
+                    <i class="fas fa-file-excel me-1"></i>Xuất Excel
+                </a>
+            </div>
         </div>
     </div>
 
@@ -292,8 +327,9 @@
             // Không cần tự động filter khi load trang vì đã có dữ liệu từ server
 
             // Bộ lọc theo tháng/năm
-            $('#filterThangNam').on('change', function() {
-                var selectedMonth = $(this).val();
+            function loadData() {
+                var selectedMonth = $('#filterThangNam').val();
+                var selectedMonthDen = $('#filterThangNamDen').val();
                 
                 // Hiển thị loading
                 $('#huongPhuCapTable tbody').addClass('loading');
@@ -302,7 +338,10 @@
                 $.ajax({
                     url: '/HuongPhuCap/GetDataByMonth',
                     type: 'GET',
-                    data: { thangNam: selectedMonth },
+                    data: { 
+                        thangNam: selectedMonth,
+                        thangNamDen: selectedMonthDen
+                    },
                     success: function(data) {
                         // Xóa dữ liệu cũ trong DataTable
                         table.clear();
@@ -344,6 +383,11 @@
                         $('#huongPhuCapTable tbody').removeClass('loading');
                     }
                 });
+            }
+
+            // Sự kiện thay đổi bộ lọc
+            $('#filterThangNam, #filterThangNamDen').on('change', function() {
+                loadData();
             });
 
 
@@ -354,7 +398,21 @@
         // Function to export Excel
         function exportExcel() {
             const selectedThangNam = $('#filterThangNam').val();
-            const url = '@Url.Action("ExportExcel", "HuongPhuCap")' + (selectedThangNam ? '?thangNam=' + selectedThangNam : '');
+            const selectedThangNamDen = $('#filterThangNamDen').val();
+            let url = '@Url.Action("ExportExcel", "HuongPhuCap")';
+            
+            const params = new URLSearchParams();
+            if (selectedThangNam) {
+                params.append('thangNam', selectedThangNam);
+            }
+            if (selectedThangNamDen) {
+                params.append('thangNamDen', selectedThangNamDen);
+            }
+            
+            if (params.toString()) {
+                url += '?' + params.toString();
+            }
+            
             window.location.href = url;
         }
     </script>

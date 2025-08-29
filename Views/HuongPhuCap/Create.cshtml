@@ -1,0 +1,233 @@
+@model QLTienLuong.Models.HuongPhuCap
+
+@{
+    ViewData["Title"] = "Thêm mới Hưởng Phụ cấp";
+}
+
+<div class="fade-in">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h5 class="mb-1">
+                <i class="fas fa-plus-circle me-2"></i>Thêm mới Hưởng Phụ cấp
+            </h5>
+            <small class="text-muted">Thêm hướng phụ cấp cho học viên</small>
+        </div>
+        <div>
+            <a asp-action="Index" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left me-1"></i>Quay lại
+            </a>
+        </div>
+    </div>
+
+    <!-- Form -->
+    <div class="card">
+        <div class="card-body">
+            <form asp-action="Create" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="MaHocVien" class="form-label">Học viên <span class="text-danger">*</span></label>
+                            <select asp-for="MaHocVien" class="form-select" asp-items="ViewBag.MaHocVien">
+                                <option value="">-- Chọn học viên --</option>
+                            </select>
+                            <span asp-validation-for="MaHocVien" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Tháng/Năm <span class="text-danger">*</span></label>
+                            <select name="ThangNam" class="form-select" required>
+                                <option value="">-- Chọn tháng/năm --</option>
+                                @if (ViewBag.ThangNamList != null)
+                                {
+                                    foreach (var month in ViewBag.ThangNamList)
+                                    {
+                                        var displayMonth = DateTime.ParseExact(month, "yyyy-MM", null).ToString("MM/yyyy");
+                                        var monthDate = DateTime.ParseExact(month, "yyyy-MM", null);
+                                        <option value="@monthDate.ToString("yyyy-MM-dd")">@displayMonth</option>
+                                    }
+                                }
+                            </select>
+                            <span asp-validation-for="ThangNam" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Thông tin phụ cấp được tính toán -->
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="alert alert-info">
+                            <h6 class="mb-2"><i class="fas fa-calculator me-2"></i>Thông tin phụ cấp được tính toán</h6>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label class="form-label small text-muted">Tổng phụ cấp:</label>
+                                    <div class="form-control-plaintext fw-bold text-primary" id="tongPhuCap">0 VNĐ</div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small text-muted">Phụ cấp cơ bản:</label>
+                                    <div class="form-control-plaintext text-info" id="phuCapCoBan">0 VNĐ</div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small text-muted">Phụ cấp T7+CN:</label>
+                                    <div class="form-control-plaintext text-warning" id="phuCapT7CN">0 VNĐ</div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small text-muted">Phụ cấp sữa:</label>
+                                    <div class="form-control-plaintext text-success" id="phuCapSua">0 VNĐ</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Các khoản trừ -->
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <h6 class="mb-2"><i class="fas fa-minus-circle me-2"></i>Các khoản trừ</h6>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label asp-for="DoanPhi" class="form-label">Đoàn phí</label>
+                            <input asp-for="DoanPhi" class="form-control" type="number" step="1000" min="0" id="doanPhi" />
+                            <span asp-validation-for="DoanPhi" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label asp-for="LopHoc" class="form-label">Lớp học</label>
+                            <input asp-for="LopHoc" class="form-control" type="number" step="1000" min="0" id="lopHoc" />
+                            <span asp-validation-for="LopHoc" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label asp-for="TrUung" class="form-label">Ứng trước</label>
+                            <input asp-for="TrUung" class="form-control" type="number" step="1000" min="0" id="trUung" />
+                            <span asp-validation-for="TrUung" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kết quả cuối cùng -->
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="alert alert-success">
+                            <h6 class="mb-2"><i class="fas fa-hand-holding-usd me-2"></i>Kết quả cuối cùng</h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="form-label small text-muted">Còn nhận:</label>
+                                    <div class="form-control-plaintext fw-bold text-success fs-5" id="conNhan">0 VNĐ</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small text-muted">Tổng các khoản trừ:</label>
+                                    <div class="form-control-plaintext text-danger" id="tongTru">0 VNĐ</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="Ky" class="form-label">Ký</label>
+                            <input asp-for="Ky" class="form-control" maxlength="10" />
+                            <span asp-validation-for="Ky" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-times me-1"></i>Hủy
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i>Lưu
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Format số tiền khi nhập
+            $('input[type="number"]').on('input', function() {
+                var value = $(this).val();
+                if (value && !isNaN(value)) {
+                    $(this).val(parseInt(value).toLocaleString('vi-VN'));
+                }
+                calculateResults();
+            });
+
+            // Xử lý khi submit form
+            $('form').on('submit', function() {
+                // Chuyển đổi định dạng số về dạng số nguyên trước khi submit
+                $('input[type="number"]').each(function() {
+                    var value = $(this).val();
+                    if (value) {
+                        var numericValue = value.replace(/[^\d]/g, '');
+                        $(this).val(numericValue);
+                    }
+                });
+            });
+
+            // Khi chọn học viên, lấy thông tin phụ cấp
+            $('#MaHocVien').on('change', function() {
+                var maHocVien = $(this).val();
+                if (maHocVien) {
+                    loadPhuCapInfo(maHocVien);
+                } else {
+                    resetPhuCapInfo();
+                }
+            });
+
+            // Hàm tính toán kết quả
+            function calculateResults() {
+                var doanPhi = parseFloat($('#doanPhi').val().replace(/[^\d]/g, '')) || 0;
+                var lopHoc = parseFloat($('#lopHoc').val().replace(/[^\d]/g, '')) || 0;
+                var trUung = parseFloat($('#trUung').val().replace(/[^\d]/g, '')) || 0;
+                
+                var tongTru = doanPhi + lopHoc + trUung;
+                var tongPhuCap = parseFloat($('#tongPhuCap').text().replace(/[^\d]/g, '')) || 0;
+                var conNhan = tongPhuCap - tongTru;
+
+                $('#tongTru').text(tongTru.toLocaleString('vi-VN') + ' VNĐ');
+                $('#conNhan').text(conNhan.toLocaleString('vi-VN') + ' VNĐ');
+            }
+
+            // Hàm load thông tin phụ cấp của học viên
+            function loadPhuCapInfo(maHocVien) {
+                $.ajax({
+                    url: '/HuongPhuCap/GetPhuCapInfo',
+                    type: 'GET',
+                    data: { maHocVien: maHocVien },
+                    success: function(data) {
+                        $('#tongPhuCap').text(data.tongPhuCap.toLocaleString('vi-VN') + ' VNĐ');
+                        $('#phuCapCoBan').text(data.phuCapCoBan.toLocaleString('vi-VN') + ' VNĐ');
+                        $('#phuCapT7CN').text(data.phuCapT7CN.toLocaleString('vi-VN') + ' VNĐ');
+                        $('#phuCapSua').text(data.phuCapSua.toLocaleString('vi-VN') + ' VNĐ');
+                        calculateResults();
+                    },
+                    error: function() {
+                        resetPhuCapInfo();
+                    }
+                });
+            }
+
+            // Hàm reset thông tin phụ cấp
+            function resetPhuCapInfo() {
+                $('#tongPhuCap').text('0 VNĐ');
+                $('#phuCapCoBan').text('0 VNĐ');
+                $('#phuCapT7CN').text('0 VNĐ');
+                $('#phuCapSua').text('0 VNĐ');
+                calculateResults();
+            }
+        });
+    </script>
+}
