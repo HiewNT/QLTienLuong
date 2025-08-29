@@ -335,6 +335,35 @@ namespace QLTienLuong.Controllers
 
                         _context.PhuCapHocViens.Add(phuCapHocVien);
                         addedCount++;
+
+                        // Kiểm tra xem học viên đã có hướng phụ cấp trong tháng hiện tại chưa
+                        var currentMonth = new DateOnly(DateTime.Now.Year, DateTime.Now.Month, 1);
+                        var existingHuongPhuCap = await _context.HuongPhuCaps
+                            .FirstOrDefaultAsync(h => h.MaHocVien == studentId && h.ThangNam == currentMonth);
+
+                        if (existingHuongPhuCap == null)
+                        {
+                            // Lấy tổng phụ cấp của học viên này (bao gồm phụ cấp mới vừa thêm)
+                            var tongPhuCap = await _context.PhuCapHocViens
+                                .Include(p => p.MaPhuCapNavigation)
+                                .Where(p => p.MaHocVien == studentId)
+                                .SumAsync(p => p.MaPhuCapNavigation.MucPhuCapCoBan ?? 0);
+
+                            // Tạo hướng phụ cấp mới cho tháng hiện tại
+                            var newHuongPhuCap = new HuongPhuCap
+                            {
+                                MaHocVien = studentId,
+                                ThangNam = currentMonth,
+                                TongPhuCap = tongPhuCap,
+                                DoanPhi = 0,
+                                LopHoc = 0,
+                                TrUung = 0,
+                                ConNhan = tongPhuCap,
+                                Ky = null
+                            };
+
+                            _context.HuongPhuCaps.Add(newHuongPhuCap);
+                        }
                     }
                     else
                     {

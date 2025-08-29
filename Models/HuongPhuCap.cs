@@ -8,10 +8,8 @@ public partial class HuongPhuCap
 {
     public int MaHuongPhuCap { get; set; }
 
-    [Required(ErrorMessage = "Vui lòng chọn học viên")]
     public string? MaHocVien { get; set; }
 
-    [Required(ErrorMessage = "Vui lòng chọn tháng/năm")]
     public DateOnly? ThangNam { get; set; }
 
     public decimal? TongPhuCap { get; set; }

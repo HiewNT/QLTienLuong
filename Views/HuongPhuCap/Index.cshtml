@@ -68,6 +68,9 @@
                 <a asp-action="Create" class="btn btn-primary btn-sm">
                     <i class="fas fa-plus me-1"></i>Thêm mới
                 </a>
+                <button onclick="addNextMonthForAll()" class="btn btn-info btn-sm">
+                    <i class="fas fa-calendar-plus me-1"></i>Thêm tháng tiếp theo
+                </button>
                 <a href="javascript:void(0)" onclick="exportExcel()" class="btn btn-success btn-sm">
                     <i class="fas fa-file-excel me-1"></i>Xuất Excel
                 </a>
@@ -232,6 +235,7 @@
                                            class="btn btn-outline-warning btn-sm" title="Sửa">
                                             <i class="fas fa-edit"></i>
                                         </a>
+
                                     </div>
                                 </td>
                             </tr>
@@ -414,6 +418,35 @@
             }
             
             window.location.href = url;
+        }
+
+        // Function to add next month for all students
+        function addNextMonthForAll() {
+            const selectedThangNam = $('#filterThangNam').val();
+            if (!selectedThangNam) {
+                alert('Vui lòng chọn tháng/năm để thêm tháng tiếp theo!');
+                return;
+            }
+
+            $.ajax({
+                url: '/HuongPhuCap/AddNextMonthForAll',
+                type: 'POST',
+                data: {
+                    thangNam: selectedThangNam
+                },
+                success: function(response) {
+                    if (response.success) {
+                        alert('Đã thêm thành công!');
+                        // Reload data
+                        loadData();
+                    } else {
+                        alert(response.message || 'Có lỗi xảy ra!');
+                    }
+                },
+                error: function() {
+                    alert('Có lỗi xảy ra khi thêm dữ liệu!');
+                }
+            });
         }
     </script>
 }

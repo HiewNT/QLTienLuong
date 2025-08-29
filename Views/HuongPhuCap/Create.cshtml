@@ -24,7 +24,7 @@
     <div class="card">
         <div class="card-body">
             <form asp-action="Create" method="post">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div asp-validation-summary="All" class="text-danger"></div>
                 
                 <div class="row">
                     <div class="col-md-6">
@@ -39,46 +39,18 @@
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label class="form-label">Tháng/Năm <span class="text-danger">*</span></label>
-                            <select name="ThangNam" class="form-select" required>
-                                <option value="">-- Chọn tháng/năm --</option>
-                                @if (ViewBag.ThangNamList != null)
-                                {
-                                    foreach (var month in ViewBag.ThangNamList)
-                                    {
-                                        var displayMonth = DateTime.ParseExact(month, "yyyy-MM", null).ToString("MM/yyyy");
-                                        var monthDate = DateTime.ParseExact(month, "yyyy-MM", null);
-                                        <option value="@monthDate.ToString("yyyy-MM-dd")">@displayMonth</option>
-                                    }
-                                }
-                            </select>
+                            <input type="month" name="ThangNam" class="form-control" required />
                             <span asp-validation-for="ThangNam" class="text-danger"></span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Thông tin phụ cấp được tính toán -->
+                <!-- Danh mục phụ cấp được nhận -->
                 <div class="row mb-3">
                     <div class="col-12">
-                        <div class="alert alert-info">
-                            <h6 class="mb-2"><i class="fas fa-calculator me-2"></i>Thông tin phụ cấp được tính toán</h6>
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <label class="form-label small text-muted">Tổng phụ cấp:</label>
-                                    <div class="form-control-plaintext fw-bold text-primary" id="tongPhuCap">0 VNĐ</div>
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="form-label small text-muted">Phụ cấp cơ bản:</label>
-                                    <div class="form-control-plaintext text-info" id="phuCapCoBan">0 VNĐ</div>
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="form-label small text-muted">Phụ cấp T7+CN:</label>
-                                    <div class="form-control-plaintext text-warning" id="phuCapT7CN">0 VNĐ</div>
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="form-label small text-muted">Phụ cấp sữa:</label>
-                                    <div class="form-control-plaintext text-success" id="phuCapSua">0 VNĐ</div>
-                                </div>
-                            </div>
+                        <h6 class="mb-2"><i class="fas fa-list me-2"></i>Danh mục phụ cấp được nhận</h6>
+                        <div id="danhMucPhuCapList" class="alert alert-light border">
+                            <div class="text-muted text-center">Chọn học viên để xem danh mục phụ cấp</div>
                         </div>
                     </div>
                 </div>
@@ -91,7 +63,7 @@
                     <div class="col-md-4">
                         <div class="mb-3">
                             <label asp-for="DoanPhi" class="form-label">Đoàn phí</label>
-                            <input asp-for="DoanPhi" class="form-control" type="number" step="1000" min="0" id="doanPhi" />
+                            <input asp-for="DoanPhi" class="form-control" type="number" step="100" min="0" id="doanPhi" />
                             <span asp-validation-for="DoanPhi" class="text-danger"></span>
                         </div>
                     </div>
@@ -111,24 +83,7 @@
                     </div>
                 </div>
 
-                <!-- Kết quả cuối cùng -->
-                <div class="row mb-3">
-                    <div class="col-12">
-                        <div class="alert alert-success">
-                            <h6 class="mb-2"><i class="fas fa-hand-holding-usd me-2"></i>Kết quả cuối cùng</h6>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <label class="form-label small text-muted">Còn nhận:</label>
-                                    <div class="form-control-plaintext fw-bold text-success fs-5" id="conNhan">0 VNĐ</div>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label small text-muted">Tổng các khoản trừ:</label>
-                                    <div class="form-control-plaintext text-danger" id="tongTru">0 VNĐ</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
 
                 <div class="row">
                     <div class="col-md-6">
@@ -156,14 +111,17 @@
 @section Scripts {
     <script>
         $(document).ready(function() {
-            // Format số tiền khi nhập
-            $('input[type="number"]').on('input', function() {
-                var value = $(this).val();
-                if (value && !isNaN(value)) {
-                    $(this).val(parseInt(value).toLocaleString('vi-VN'));
-                }
-                calculateResults();
-            });
+                         // Format số tiền khi nhập
+             $('input[type="number"]').on('input', function() {
+                 var value = $(this).val();
+                 if (value && !isNaN(value)) {
+                     // Chỉ format khi giá trị hợp lệ
+                     var numericValue = value.replace(/[^\d]/g, '');
+                     if (numericValue) {
+                         $(this).val(parseInt(numericValue).toLocaleString('vi-VN'));
+                     }
+                 }
+             });
 
             // Xử lý khi submit form
             $('form').on('submit', function() {
@@ -172,62 +130,54 @@
                     var value = $(this).val();
                     if (value) {
                         var numericValue = value.replace(/[^\d]/g, '');
-                        $(this).val(numericValue);
+                        if (numericValue) {
+                            $(this).val(numericValue);
+                        } else {
+                            $(this).val('0');
+                        }
+                    } else {
+                        $(this).val('0');
                     }
                 });
             });
 
-            // Khi chọn học viên, lấy thông tin phụ cấp
+            // Khi chọn học viên, load danh mục phụ cấp
             $('#MaHocVien').on('change', function() {
                 var maHocVien = $(this).val();
                 if (maHocVien) {
-                    loadPhuCapInfo(maHocVien);
+                    loadDanhMucPhuCap(maHocVien);
                 } else {
-                    resetPhuCapInfo();
+                    resetDanhMucPhuCap();
                 }
             });
 
-            // Hàm tính toán kết quả
-            function calculateResults() {
-                var doanPhi = parseFloat($('#doanPhi').val().replace(/[^\d]/g, '')) || 0;
-                var lopHoc = parseFloat($('#lopHoc').val().replace(/[^\d]/g, '')) || 0;
-                var trUung = parseFloat($('#trUung').val().replace(/[^\d]/g, '')) || 0;
-                
-                var tongTru = doanPhi + lopHoc + trUung;
-                var tongPhuCap = parseFloat($('#tongPhuCap').text().replace(/[^\d]/g, '')) || 0;
-                var conNhan = tongPhuCap - tongTru;
-
-                $('#tongTru').text(tongTru.toLocaleString('vi-VN') + ' VNĐ');
-                $('#conNhan').text(conNhan.toLocaleString('vi-VN') + ' VNĐ');
-            }
-
-            // Hàm load thông tin phụ cấp của học viên
-            function loadPhuCapInfo(maHocVien) {
+            // Hàm load danh mục phụ cấp của học viên
+            function loadDanhMucPhuCap(maHocVien) {
                 $.ajax({
                     url: '/HuongPhuCap/GetPhuCapInfo',
                     type: 'GET',
                     data: { maHocVien: maHocVien },
                     success: function(data) {
-                        $('#tongPhuCap').text(data.tongPhuCap.toLocaleString('vi-VN') + ' VNĐ');
-                        $('#phuCapCoBan').text(data.phuCapCoBan.toLocaleString('vi-VN') + ' VNĐ');
-                        $('#phuCapT7CN').text(data.phuCapT7CN.toLocaleString('vi-VN') + ' VNĐ');
-                        $('#phuCapSua').text(data.phuCapSua.toLocaleString('vi-VN') + ' VNĐ');
-                        calculateResults();
+                        var html = '<div class="row">';
+                        html += '<div class="col-md-3"><strong>Tổng phụ cấp:</strong><br><span class="text-primary fw-bold">' + data.tongPhuCap.toLocaleString('vi-VN') + ' VNĐ</span></div>';
+                        html += '<div class="col-md-3"><strong>Phụ cấp cơ bản:</strong><br><span class="text-info">' + data.phuCapCoBan.toLocaleString('vi-VN') + ' VNĐ</span></div>';
+                        html += '<div class="col-md-3"><strong>Phụ cấp T7+CN:</strong><br><span class="text-warning">' + data.phuCapT7CN.toLocaleString('vi-VN') + ' VNĐ</span></div>';
+                        html += '<div class="col-md-3"><strong>Phụ cấp sữa:</strong><br><span class="text-success">' + data.phuCapSua.toLocaleString('vi-VN') + ' VNĐ</span></div>';
+                        html += '</div>';
+                        $('#danhMucPhuCapList').html(html);
                     },
                     error: function() {
-                        resetPhuCapInfo();
+                        $('#danhMucPhuCapList').html('<div class="text-danger text-center">Không thể tải thông tin phụ cấp</div>');
                     }
                 });
             }
 
-            // Hàm reset thông tin phụ cấp
-            function resetPhuCapInfo() {
-                $('#tongPhuCap').text('0 VNĐ');
-                $('#phuCapCoBan').text('0 VNĐ');
-                $('#phuCapT7CN').text('0 VNĐ');
-                $('#phuCapSua').text('0 VNĐ');
-                calculateResults();
+            // Hàm reset danh mục phụ cấp
+            function resetDanhMucPhuCap() {
+                $('#danhMucPhuCapList').html('<div class="text-muted text-center">Chọn học viên để xem danh mục phụ cấp</div>');
             }
+
+            
         });
     </script>
 }
